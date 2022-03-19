@@ -3,3 +3,5 @@ Data structures and algorithms project: Making an implementation of the 2048 gam
 automatically using the minimax algorithm.
 
 - [Project specification](doc/spec.md)
+- [Week 1 report](doc/week1_report.md)
+
