@@ -1,0 +1,8 @@
+*
+!/**/
+!*.*
+*.gcda
+*.gcno
+*.gcov
+*.o
+!Makefile
