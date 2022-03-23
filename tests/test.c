@@ -7,7 +7,7 @@
 START_TEST(test_array_is_created) {
 	int **ga = NULL;
 	ga = init_game_array();
-	ck_assert_ptr_nonnull(ga);
+	ck_assert_ptr_ne(ga, NULL);
 	ga[1][1] = 2;
 	ck_assert_int_eq(ga[1][1], 2);
 	free_game_array(ga);
