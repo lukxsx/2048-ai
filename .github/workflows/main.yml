@@ -1,0 +1,19 @@
+name: Codecov
+on: [push, pull_request]
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install check
+        run: sudo apt-get install -y check
+      - name: Fetch
+        uses: actions/checkout@master
+      - name: Test
+        run: |
+          make codecov
+          ./test
+          gcov -abcfu game.c
+      - name: Upload
+        uses: codecov/codecov-action@v2
+        with:
+          files: ./game.c.gcov
