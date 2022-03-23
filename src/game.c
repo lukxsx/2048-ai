@@ -1,6 +1,11 @@
+/*
+ * This file contains the game logic of the 2048 game 
+ */
+
 #include <stdlib.h>
+
 #include "game.h"
-#include "common.h"
+#include "text_ui.h"
 
 
 // Allocate a 4x4 array and set everything to 0.
@@ -46,7 +51,7 @@ game_state_t* new_game() {
 }
 
 
-// Stops and frees the current game
+// Frees the current game
 void end_game(game_state_t *game) {
 	free_game_array(game->game_array);
 	free(game);

@@ -2,19 +2,25 @@
 #include <stdlib.h>
 
 #include "../src/game.h"
+#include "../src/text_ui.h"
 
-START_TEST(test_example) {
-	// nothing tested here
-	
+START_TEST(test_array_is_created) {
+	int **ga = NULL;
+	ga = init_game_array();
+	ck_assert_ptr_nonnull(ga);
+	ga[1][1] = 2;
+	ck_assert_int_eq(ga[1][1], 2);
+	free_game_array(ga);
 }
 END_TEST
+
 
 Suite * game_suite(void) {
 	Suite *s;
 	TCase *tc_core;
 	s = suite_create("game");
 	tc_core = tcase_create("Core");
-	tcase_add_test(tc_core, test_example);
+	tcase_add_test(tc_core, test_array_is_created);
 	suite_add_tcase(s, tc_core);
 	return s;
 
