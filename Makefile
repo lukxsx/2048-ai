@@ -1,7 +1,6 @@
-.PHONY: all clean
-
 CC = gcc
 CFLAGS = -O2 -std=c99 -pedantic
+CHECK_FLAGS := $(shell bash check_flags.sh)
 
 SRC_DIR     = ./src
 SRC_LIST = $(wildcard $(SRC_DIR)/*.c)
@@ -18,15 +17,11 @@ all: 2048
 	$(CC) $(CFLAGS) $(OBJ_LIST) -o 2048
 
 check:
-	$(CC) -O0 -o test -lcheck tests/test.c $(filter-out src/main.c, $(wildcard src/*.c))
+	$(CC) -O0 -o test tests/test.c $(filter-out src/main.c, $(wildcard src/*.c)) $(CHECK_FLAGS)
 	@./test
 
 codecov:
-	$(CC) -ftest-coverage -fprofile-arcs -O0 -o test tests/test.c $(filter-out src/main.c, $(wildcard src/*.c)) -lcheck -lsubunit -pthread -pthread -lrt -lm -lsubunit
-
-htmlreport:
-	
+	$(CC) -ftest-coverage -fprofile-arcs -O0 -o test tests/test.c $(filter-out src/main.c, $(wildcard src/*.c)) $(CHECK_FLAGS)
 
 clean:
 	rm -f 2048 $(OBJ_LIST) test *.gcda *.gcno *.gcov
-
