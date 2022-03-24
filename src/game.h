@@ -9,9 +9,22 @@ typedef struct {
 	int moves;
 } game_state_t;
 
+
+typedef enum movement {
+	LEFT,
+	RIGHT,
+	UP,
+	DOWN
+} direction;
+
+
 int** init_game_array();
 void free_game_array(int **game_array);
 game_state_t* new_game();
 void end_game(game_state_t *game);
+int is_array_full(game_state_t *game);
+int is_tile_empty(int **game_array, int x, int y);
+void create_random_tile(game_state_t *game);
+void move(game_state_t *game, direction dir);
 
 #endif

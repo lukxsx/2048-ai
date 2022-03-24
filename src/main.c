@@ -4,6 +4,7 @@
 
 #include "game.h"
 #include "text_ui.h"
+#include "player.h"
 
 
 int main(int argc, char **argv) {
@@ -27,6 +28,8 @@ int main(int argc, char **argv) {
 	if (ai_mode) {
 		printf("AI mode enabled\n");
 		
+	} else {
+		play();
 	}
 	
 	
