@@ -1,15 +1,23 @@
 /*
- * This file contains the game logic of the 2048 game 
- */
+--------------------------------------------------------------------------------
+This file contains the game logic of the 2048 game.
+Creating game, ending game, allocating arrays and moving and combining tiles
+--------------------------------------------------------------------------------
+*/
 
 #include <stdlib.h>
+#include <string.h>
 
 #include "game.h"
 #include "text_ui.h"
 
 
-// Allocate a 4x4 array and set everything to 0.
-// Returns NULL in case of memory allocation error.
+/*
+================================================================================
+Allocate a 4x4 array and set everything to 0.
+Returns NULL in case of memory allocation error.
+================================================================================
+*/
 int** init_game_array() {
 	int **game_array;
 	game_array = calloc(4, sizeof(int *));
@@ -54,6 +62,21 @@ game_state_t* new_game() {
 }
 
 
+// Makes a copy of the given game_state_t and returns a pointer to the copy
+game_state_t* copy_game(game_state_t *old) {
+    game_state_t *new = malloc(sizeof(game_state_t));
+    new->score = old->score;
+    new->moves = old->moves;
+    
+    new->game_array = init_game_array();
+    for (int i = 0; i < 4; i++) {
+        new->game_array[i] = memcpy(new->game_array[i], old->game_array[i],
+            (4 * sizeof(int)));
+    }
+    return new;
+}
+
+
 // Frees the current game
 void end_game(game_state_t *game) {
 	free_game_array(game->game_array);
@@ -81,12 +104,17 @@ int is_tile_empty(int **game_array, int x, int y) {
 }
 
 
-// Creates a new tile in random (empty) coordinates
+/*
+================================================================================
+Creates a new tile in random (empty) coordinates
+================================================================================
+*/
 void create_random_tile(game_state_t *game) {
-	// make 2 with probability of 75%, 4 with probability of 25%
+	// Create 2 with probability of 75%, 4 with probability of 25%
 	int prob = (rand() & 1) | (rand() & 1);
 	int value = prob ? 2 : 4;
 	int rx, ry;
+    
 	// Trying random coordinates until an empty tile is found
 	for ( ; ; ) {
 		rx = rand() % 4;
@@ -95,10 +123,73 @@ void create_random_tile(game_state_t *game) {
 			break;
 		}
 	}
+    
 	game->game_array[ry][rx] = value;
 }
 
 
-void move(game_state_t *game, direction dir) {
-	
+/*
+================================================================================
+Combines the same numbers in an array. Also updates the score.
+================================================================================
+*/
+void combine(int* a, int n, game_state_t *game) {
+	for (int i = 0; i < n; i++) {
+		if (i < n-1) {
+			if (a[i] == a[i+1] && a[i] != 0) {
+				a[i] = a[i] * 2;
+				game->score += a[i];
+				a[i+1] = 0;
+			}
+		}
+	}
+}
+
+
+/*
+================================================================================
+Helper function that moves all tiles to the left.
+================================================================================
+*/
+void move_all_left(int *a, int n) {
+	int last = 0;
+	for (int i = 0; i < n; i++) {
+		if (a[i] == 0) {
+			continue;
+		}
+		if (a[i] != 0) {
+			a[last] = a[i];
+			if (i != last) {
+				a[i] = 0;
+			}
+			last++;
+		}
+	}
+}
+
+
+/*
+================================================================================
+Reverses one-dimensional array of n length
+================================================================================
+*/
+void reverse_array(int *array, int n) {
+	int temp[4];
+
+	for (int i = 0; i < n; i++) {
+		temp[n - 1 - i] = array[i];
+	}
+	for (int i = 0; i < n; i++) {
+		array[i] = temp[i];
+	}
+}
+
+
+/*
+================================================================================
+================================================================================
+*/
+void move(game_state_t *game, direction dir){
+    
+    
 }
