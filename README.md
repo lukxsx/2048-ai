@@ -6,4 +6,5 @@ automatically using the minimax algorithm.
 
 - [Project specification](doc/spec.md)
 - [Week 1 report](doc/week1_report.md)
+- [Week 2 report](doc/week2_report.md)
 - [Test coverage report](https://codecov.io/gh/lukxsx/2048-ai)
