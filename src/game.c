@@ -7,6 +7,7 @@ Creating game, ending game, allocating arrays and moving and combining tiles
 
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 #include "game.h"
 #include "text_ui.h"
@@ -211,9 +212,18 @@ void reverse_array(int *array, int n) {
 
 /*
 ================================================================================
+This function moves the tiles to specified direction. Only left is implemented
+so far.
 ================================================================================
 */
 void move(game_state_t *game, direction dir){
-
-
+    if (dir == LEFT) {
+        for (int i = 0; i < 4; i++) {
+            printf("moving to left\n");
+            move_all_left(game->game_array[i], 4);
+            combine(game->game_array[i], 4, game);
+            move_all_left(game->game_array[i], 4);
+        }
+    }
+    print_array(game);
 }
