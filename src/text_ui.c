@@ -9,7 +9,6 @@ This file contains the functions that print the game array to the screen
 
 #include "game.h"
 
-
 /*
 ================================================================================
 Print the help (-h option or with unknown option
@@ -17,23 +16,22 @@ Print the help (-h option or with unknown option
 */
 void printusage(char *program_name) {
     fprintf(stderr, "Simple command line 2048 clone. Can be played with WASD"
-		" keys.\n");
+                    " keys.\n");
     fprintf(stderr, "Usage: %s [options]\n", program_name);
     fprintf(stderr, "Available options:\n");
     fprintf(stderr, "    -a    Let AI play the game\n");
     fprintf(stderr, "    -h    Show this information\n");
 }
 
-
 /*
 ================================================================================
 Print the error message to stderr and exit the application
 ================================================================================
-*/void error_exit(char *msg) {
+*/
+void error_exit(char *msg) {
     fprintf(stderr, "%s", msg);
     exit(EXIT_FAILURE);
 }
-
 
 /*
 ================================================================================
@@ -42,30 +40,27 @@ The following are helper functions to print different parts of the game board
 */
 void print_top(int x_size) {
     printf("╔═══════");
-    for (int i = 0; i < x_size-1; i++) {
+    for (int i = 0; i < x_size - 1; i++) {
         printf("╦═══════");
     }
     printf("╗\n");
 }
 
-
 void print_middle_walls(int x_size) {
     printf("║       ");
-        for (int i = 0; i < x_size-1; i++) {
-            printf("║       ");
-        }
-        printf("║\n");
+    for (int i = 0; i < x_size - 1; i++) {
+        printf("║       ");
+    }
+    printf("║\n");
 }
-
 
 void print_row_lines(int x_size) {
     printf("╠═══════");
-    for (int i = 0; i < x_size-1; i++) {
+    for (int i = 0; i < x_size - 1; i++) {
         printf("╬═══════");
     }
     printf("╣\n");
 }
-
 
 /*
 ================================================================================
@@ -91,7 +86,6 @@ void print_array(game_state_t *game) {
             } else {
                 printf("║   %d   ", num);
             }
-
         }
         printf("║\n");
 
@@ -101,7 +95,7 @@ void print_array(game_state_t *game) {
         }
     }
     printf("╚═══════");
-    for (int i = 0; i < 4-1; i++) {
+    for (int i = 0; i < 4 - 1; i++) {
         printf("╩═══════");
     }
     printf("╝\n");

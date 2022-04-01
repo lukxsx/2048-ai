@@ -23,5 +23,8 @@ check:
 codecov:
 	$(CC) -ftest-coverage -fprofile-arcs -O0 -o test tests/test.c $(filter-out src/main.c, $(wildcard src/*.c)) $(CHECK_FLAGS)
 
+format:
+	@python format.py	
+
 clean:
 	rm -f 2048 $(OBJ_LIST) test *.gcda *.gcno *.gcov

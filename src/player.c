@@ -4,15 +4,14 @@ Functions for playing the game in the terminal. Keyboard input, game loop
 ================================================================================
 */
 
-#include <termios.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <time.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <termios.h>
+#include <time.h>
+#include <unistd.h>
 
 #include "game.h"
 #include "text_ui.h"
-
 
 void play() {
     // Set random seed
@@ -34,33 +33,33 @@ void play() {
     print_array(game);
 
     // Main game loop
-    for ( ; ; ) {
+    for (;;) {
         // End the game if the array is full
-        if (is_array_full(game)) break;
+        if (is_array_full(game))
+            break;
 
         // Process input
         char key = getchar();
         switch (key) {
-            case 'w':
-                move(game, UP);
-                break;
-            case 'a':
-                move(game, LEFT);
-                break;
-            case 's':
-                move(game, DOWN);
-                break;
-            case 'd':
-                move(game, RIGHT);
-                break;
-            default:
-                break;
+        case 'w':
+            move(game, UP);
+            break;
+        case 'a':
+            move(game, LEFT);
+            break;
+        case 's':
+            move(game, DOWN);
+            break;
+        case 'd':
+            move(game, RIGHT);
+            break;
+        default:
+            break;
         }
     }
 
     // Cleanup
     end_game(game);
-
 
     // Return terminal back to the previous state
     tcsetattr(STDIN_FILENO, TCSANOW, &old_terminal);
