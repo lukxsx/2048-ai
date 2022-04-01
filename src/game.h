@@ -88,7 +88,7 @@ void create_random_tile(game_state_t *game);
 Combines the same numbers in an array. Also updates the score.
 ================================================================================
 */
-void combine(int* a, int n, game_state_t *game);
+void combine(int* a, int n, game_state_t *game, int *modflag);
 
 
 /*
@@ -96,7 +96,7 @@ void combine(int* a, int n, game_state_t *game);
 Helper function that moves all tiles to the left.
 ================================================================================
 */
-void move_all_left(int *a, int n);
+void move_all_left(int *a, int n, int *modflag);
 
 
 /*
@@ -109,7 +109,15 @@ void reverse_array(int *array, int n);
 
 /*
 ================================================================================
-work in progress..
+This function performs the actions to move the array.
+First move everything to left side, then run the combination algorithm and then
+move everything to left side again.
+*/
+void move_array(int *array, game_state_t *game, int *modflag);
+
+/*
+================================================================================
+Move array in a specific direction
 ================================================================================
 */
 void move(game_state_t *game, direction dir);

@@ -155,15 +155,17 @@ void create_random_tile(game_state_t *game) {
 
 /*
 ================================================================================
-Combines the same numbers in an array. Also updates the score.
+Combines the same numbers in an array. Also updates the score and sets the
+modification flag if something is changed.
 ================================================================================
 */
-void combine(int* a, int n, game_state_t *game) {
+void combine(int* a, int n, game_state_t *game, int *modflag) {
     for (int i = 0; i < n; i++) {
         if (i < n-1) {
             if (a[i] == a[i+1] && a[i] != 0) {
                 a[i] = a[i] * 2;
                 game->score += a[i];
+                *modflag = 1;
                 a[i+1] = 0;
             }
         }
@@ -173,10 +175,11 @@ void combine(int* a, int n, game_state_t *game) {
 
 /*
 ================================================================================
-Helper function that moves all tiles to the left.
+Helper function that moves all tiles to the left. Updates the modification flag
+if something is changed.
 ================================================================================
 */
-void move_all_left(int *a, int n) {
+void move_all_left(int *a, int n, int *modflag) {
     int last = 0;
     for (int i = 0; i < n; i++) {
         if (a[i] == 0) {
@@ -186,6 +189,7 @@ void move_all_left(int *a, int n) {
             a[last] = a[i];
             if (i != last) {
                 a[i] = 0;
+                *modflag = 1;
             }
             last++;
         }
@@ -216,28 +220,33 @@ This function performs the actions to move the array.
 First move everything to left side, then run the combination algorithm and then
 move everything to left side again.
 */
-void move_array(int *array, game_state_t *game) {
-    move_all_left(array, 4);
-    combine(array, 4, game);
-    move_all_left(array, 4);
+void move_array(int *array, game_state_t *game, int* modflag) {
+    move_all_left(array, 4, modflag);
+    combine(array, 4, game, modflag);
+    move_all_left(array, 4, modflag);
 }
 
 
 /*
 ================================================================================
-This function moves the tiles to specified direction
+This function moves the tiles to specified direction.
+Using a modification flag that is set if something is changed in the array.
+Only add a new tile and process move if a change has happened.
 ================================================================================
 */
 void move(game_state_t *game, direction dir){
+    int modflag = 0;
+    int *flag = &modflag;
+
     if (dir == LEFT) {
         for (int i = 0; i < 4; i++) {
-            move_array(game->game_array[i], game);
+            move_array(game->game_array[i], game, flag);
         }
     } else if (dir == RIGHT) {
         for (int i = 0; i < 4; i++) {
             int *arr = game->game_array[i];
             reverse_array(arr, 4);
-            move_array(arr, game);
+            move_array(arr, game, flag);
             reverse_array(arr, 4);
         }
     } else if (dir == UP) {
@@ -246,7 +255,7 @@ void move(game_state_t *game, direction dir){
             for (int j = 0; j < 4; j++) {
                 temp[j] = game->game_array[j][i];
             }
-            move_array(temp, game);
+            move_array(temp, game, flag);
             for (int j = 0; j < 4; j++) {
                 game->game_array[j][i] = temp[j];
             }
@@ -258,7 +267,7 @@ void move(game_state_t *game, direction dir){
                 temp[j] = game->game_array[j][i];
             }
             reverse_array(temp, 4);
-            move_array(temp, game);
+            move_array(temp, game, flag);
             reverse_array(temp, 4);
             for (int j = 0; j < 4; j++) {
                 game->game_array[j][i] = temp[j];
@@ -266,6 +275,9 @@ void move(game_state_t *game, direction dir){
         }
     }
 
-
+    if (modflag) {
+        create_random_tile(game);
+        game->moves++;
+    }
     print_array(game);
 }
