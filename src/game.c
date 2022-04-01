@@ -212,18 +212,60 @@ void reverse_array(int *array, int n) {
 
 /*
 ================================================================================
-This function moves the tiles to specified direction. Only left is implemented
-so far.
+This function performs the actions to move the array.
+First move everything to left side, then run the combination algorithm and then
+move everything to left side again.
+*/
+void move_array(int *array, game_state_t *game) {
+    move_all_left(array, 4);
+    combine(array, 4, game);
+    move_all_left(array, 4);
+}
+
+
+/*
+================================================================================
+This function moves the tiles to specified direction
 ================================================================================
 */
 void move(game_state_t *game, direction dir){
     if (dir == LEFT) {
         for (int i = 0; i < 4; i++) {
-            printf("moving to left\n");
-            move_all_left(game->game_array[i], 4);
-            combine(game->game_array[i], 4, game);
-            move_all_left(game->game_array[i], 4);
+            move_array(game->game_array[i], game);
+        }
+    } else if (dir == RIGHT) {
+        for (int i = 0; i < 4; i++) {
+            int *arr = game->game_array[i];
+            reverse_array(arr, 4);
+            move_array(arr, game);
+            reverse_array(arr, 4);
+        }
+    } else if (dir == UP) {
+        for (int i = 0; i < 4; i++) {
+            int temp[4];
+            for (int j = 0; j < 4; j++) {
+                temp[j] = game->game_array[j][i];
+            }
+            move_array(temp, game);
+            for (int j = 0; j < 4; j++) {
+                game->game_array[j][i] = temp[j];
+            }
+        }
+    } else if (dir == DOWN) {
+        for (int i = 0; i < 4; i++) {
+            int temp[4];
+            for (int j = 0; j < 4; j++) {
+                temp[j] = game->game_array[j][i];
+            }
+            reverse_array(temp, 4);
+            move_array(temp, game);
+            reverse_array(temp, 4);
+            for (int j = 0; j < 4; j++) {
+                game->game_array[j][i] = temp[j];
+            }
         }
     }
+
+
     print_array(game);
 }

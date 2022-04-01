@@ -16,7 +16,8 @@ Print the help (-h option or with unknown option
 ================================================================================
 */
 void printusage(char *program_name) {
-    fprintf(stderr, "Simple command line 2048 clone. Can be played with WASD keys.\n");
+    fprintf(stderr, "Simple command line 2048 clone. Can be played with WASD"
+		" keys.\n");
     fprintf(stderr, "Usage: %s [options]\n", program_name);
     fprintf(stderr, "Available options:\n");
     fprintf(stderr, "    -a    Let AI play the game\n");
