@@ -8,6 +8,9 @@
 ## Project info
 - Implementation of the 2048 game and an AI bot to play it automatically
 - Using minimax algorithm for solving the game
+- Also implementing two additional modes: very simple AI mode and mode that
+plays the game with randomized input
+- Compare the results of different modes
 - Create a game client with two options: user play or AI play
 - Programming language: C
   - Unit tests using [Check](https://libcheck.github.io/check/), it should be already installed on university Linux systems, at least on Melkki

@@ -10,6 +10,7 @@ automatically using the minimax algorithm.
 - [Week 2 report](doc/week2_report.md)
 - [Week 3 report](doc/week3_report.md)
 - [Test coverage report](https://codecov.io/gh/lukxsx/2048-ai)
+- [Testing document](doc/testing.md)
 
 ## Building
 ### Prerequisites
@@ -26,6 +27,13 @@ Now the program can be run with ```./2048```.
 The tests can be run with
 ```
 make check
+```
+
+### Code auto formatting
+The code can be formatted with clang-format to ensure the constant code style.
+Note that clang and python must be installed to use this function.
+```
+make format
 ```
 
 ## Usage
