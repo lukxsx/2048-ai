@@ -266,5 +266,5 @@ void move(game_state_t *game, direction dir) {
         create_random_tile(game);
         game->moves++;
     }
-    print_array(game);
+    // print_array(game);
 }

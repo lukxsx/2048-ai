@@ -56,6 +56,7 @@ void play() {
         default:
             break;
         }
+        print_array(game);
     }
 
     // Cleanup
