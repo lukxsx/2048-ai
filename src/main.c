@@ -49,6 +49,9 @@ void compare(int n) {
     printf("──────────────────────────────\n");
     printf("rand    %-5d    %-5d    %-5d\n", rand_avg, rand_min, rand_max);
     printf("simp    %-5d    %-5d    %-5d\n", simp_avg, simp_min, simp_max);
+    
+    free(rand_scores);
+    free(simp_scores);
 }
 
 int main(int argc, char **argv) {
