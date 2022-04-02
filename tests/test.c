@@ -128,8 +128,8 @@ START_TEST(test_move_left1) {
 
     ck_assert_int_eq(arr[0], 2);
     ck_assert_int_eq(arr[1], 4);
+    ck_assert_int_eq(arr[2], 0);
     ck_assert_int_eq(arr[3], 0);
-    ck_assert_int_eq(arr[4], 0);
 }
 END_TEST
 
@@ -142,8 +142,8 @@ START_TEST(test_move_left2) {
 
     ck_assert_int_eq(arr[0], 2);
     ck_assert_int_eq(arr[1], 8);
+    ck_assert_int_eq(arr[2], 0);
     ck_assert_int_eq(arr[3], 0);
-    ck_assert_int_eq(arr[4], 0);
 }
 END_TEST
 
@@ -156,8 +156,8 @@ START_TEST(test_move_left3) {
 
     ck_assert_int_eq(arr[0], 2);
     ck_assert_int_eq(arr[1], 0);
+    ck_assert_int_eq(arr[2], 0);
     ck_assert_int_eq(arr[3], 0);
-    ck_assert_int_eq(arr[4], 0);
 }
 END_TEST
 
