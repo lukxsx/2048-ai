@@ -173,52 +173,52 @@ START_TEST(test_reverse_array) {
 END_TEST
 
 START_TEST(test_move_array1) {
-	game_state_t *game = new_game();
+    game_state_t *game = new_game();
     int arr[4] = {2, 2, 2, 2};
     int modflag = 0;
     int *flag = &modflag;
-    
+
     move_array(arr, game, flag);
-    
+
     ck_assert_int_eq(arr[0], 4);
     ck_assert_int_eq(arr[1], 4);
     ck_assert_int_eq(arr[2], 0);
     ck_assert_int_eq(arr[3], 0);
-    
+
     end_game(game);
 }
 END_TEST
 
 START_TEST(test_move_array2) {
-	game_state_t *game = new_game();
+    game_state_t *game = new_game();
     int arr[4] = {8, 0, 0, 8};
     int modflag = 0;
     int *flag = &modflag;
-    
+
     move_array(arr, game, flag);
-    
+
     ck_assert_int_eq(arr[0], 16);
     ck_assert_int_eq(arr[1], 0);
     ck_assert_int_eq(arr[2], 0);
     ck_assert_int_eq(arr[3], 0);
-    
+
     end_game(game);
 }
 END_TEST
 
 START_TEST(test_move_array3) {
-	game_state_t *game = new_game();
+    game_state_t *game = new_game();
     int arr[4] = {2, 4, 2, 4};
     int modflag = 0;
     int *flag = &modflag;
-    
+
     move_array(arr, game, flag);
-    
+
     ck_assert_int_eq(arr[0], 2);
     ck_assert_int_eq(arr[1], 4);
     ck_assert_int_eq(arr[2], 2);
     ck_assert_int_eq(arr[3], 4);
-    
+
     end_game(game);
 }
 END_TEST

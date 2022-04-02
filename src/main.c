@@ -4,6 +4,8 @@
 #include <stdlib.h>
 
 #include "game.h"
+
+#include "ai.h"
 #include "player.h"
 #include "random_ai.h"
 #include "text_ui.h"
@@ -11,12 +13,16 @@
 void compare(int n) {
     int *rand_scores = calloc(n, sizeof(int));
     int *simp_scores = calloc(n, sizeof(int));
+    int *mmax_scores = calloc(n, sizeof(int));
     size_t rand_sum = 0;
-    size_t simple_sum = 0;
+    size_t simp_sum = 0;
+    size_t mmax_sum = 0;
     int rand_min = INT_MAX;
     int simp_min = INT_MAX;
+    int mmax_min = INT_MAX;
     int rand_max = 0;
     int simp_max = 0;
+    int mmax_max = 0;
 
     // Test with random input
     for (int i = 0; i < n; i++) {
@@ -31,16 +37,27 @@ void compare(int n) {
     // Test with simple AI
     for (int i = 0; i < n; i++) {
         simp_scores[i] = random_ai_play(0, 1);
-        simple_sum += simp_scores[i];
+        simp_sum += simp_scores[i];
         if (simp_scores[i] < simp_min)
             simp_min = simp_scores[i];
         if (simp_scores[i] > simp_max)
             simp_max = simp_scores[i];
     }
 
+    // Test with minimax AI
+    for (int i = 0; i < n; i++) {
+        mmax_scores[i] = ai_play(0);
+        mmax_sum += mmax_scores[i];
+        if (mmax_scores[i] < mmax_min)
+            mmax_min = mmax_scores[i];
+        if (mmax_scores[i] > mmax_max)
+            mmax_max = mmax_scores[i];
+    }
+
     // Calculate averages
     int rand_avg = rand_sum / n;
-    int simp_avg = simple_sum / n;
+    int simp_avg = simp_sum / n;
+    int mmax_avg = mmax_sum / n;
 
     // Print data
     printf("   Test results (%d runs)\n", n);
@@ -49,9 +66,11 @@ void compare(int n) {
     printf("──────────────────────────────\n");
     printf("rand    %-5d    %-5d    %-5d\n", rand_avg, rand_min, rand_max);
     printf("simp    %-5d    %-5d    %-5d\n", simp_avg, simp_min, simp_max);
-    
+    printf("mmax    %-5d    %-5d    %-5d\n", mmax_avg, mmax_min, mmax_max);
+
     free(rand_scores);
     free(simp_scores);
+    free(mmax_scores);
 }
 
 int main(int argc, char **argv) {
@@ -91,7 +110,7 @@ int main(int argc, char **argv) {
     }
 
     if (ai_mode == 1) { // start in AI mode
-        printf("AI mode enabled\n");
+        ai_play(delay);
 
     } else if (ai_mode == 2) {
         random_ai_play(delay, rand);
