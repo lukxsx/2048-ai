@@ -94,9 +94,16 @@ void decide_move(game_state_t *bgame, game_state_t *l, game_state_t *r,
     }
 }
 
-void random_ai_play(int delay, int ai) {
+/*
+================================================================================
+Play the game with simple AI or just play the game to the end with randomized
+input. Returns the score of the game.
+================================================================================
+*/
+int random_ai_play(int delay, int ai) {
     // Set random seed
     srand(time(NULL));
+    int score = 0;
 
     game_state_t *bgame = new_game();
 
@@ -111,8 +118,9 @@ void random_ai_play(int delay, int ai) {
             print_array(bgame);
             usleep(delay * 1000);
         }
+        score = bgame->score;
         end_game(bgame);
-        return;
+        return score;
     }
 
     // Play the game with AI until the end
@@ -150,5 +158,7 @@ void random_ai_play(int delay, int ai) {
         if (delay)
             usleep(1000 * delay); // add delay
     }
+    score = bgame->score;
     end_game(bgame);
+    return score;
 }

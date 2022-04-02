@@ -32,11 +32,12 @@ make check
 ### Configuration
 The program supports few command line options. If no options are given, the game will start in "normal" mode (the player controls the game)
 ```
--a    Start in AI mode
--s    Simple/stupid AI mode
--r    Play the game with randomized input
--t    Add delay (in milliseconds)
--h    Show help
+-a            Let AI play the game
+-s            Use simple AI
+-r            Play the game with randomized input
+-t [value]    Delay in milliseconds
+-c            Run in comparison mode
+-h            Show this information
 ```
 ### Gameplay
 The game can be played with ```W, A, S and D``` keys.
