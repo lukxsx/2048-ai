@@ -101,6 +101,6 @@ void move_array(int *array, game_state_t *game, int *modflag);
 Move array in a specific direction
 ================================================================================
 */
-void move(game_state_t *game, direction dir);
+int move(game_state_t *game, direction dir);
 
 #endif

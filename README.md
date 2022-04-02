@@ -33,7 +33,8 @@ make check
 The program supports few command line options. If no options are given, the game will start in "normal" mode (the player controls the game)
 ```
 -a    Start in AI mode
--r    Start in randomized "AI" mode
+-s    Simple/stupid AI mode
+-r    Play the game with randomized input
 -t    Add delay (in milliseconds)
 -h    Show help
 ```

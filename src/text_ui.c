@@ -20,8 +20,9 @@ void printusage(char *program_name) {
     fprintf(stderr, "Usage: %s [options]\n", program_name);
     fprintf(stderr, "Available options:\n");
     fprintf(stderr, "    -a            Let AI play the game\n");
-    fprintf(stderr, "    -r            Use \"random\" AI\n");
-    fprintf(stderr, "    -t [value]    Delay (for AI modes) in milliseconds\n");
+    fprintf(stderr, "    -s            Use simple/stupid AI\n");
+    fprintf(stderr, "    -r            Play the game with randomized input\n");
+    fprintf(stderr, "    -t [value]    Delay in milliseconds\n");
     fprintf(stderr, "    -h            Show this information\n");
 }
 

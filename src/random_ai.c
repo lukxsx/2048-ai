@@ -12,6 +12,7 @@ This file has code for a very stupid "AI"
 
 #define _GNU_SOURCE
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <unistd.h>
@@ -19,29 +20,102 @@ This file has code for a very stupid "AI"
 #include "game.h"
 #include "text_ui.h"
 
-void play_random(game_state_t *game) {
-    while (!is_array_full(game)) {
-        int dir = rand() % 4;
-        if (dir == 0)
-            move(game, LEFT);
-        if (dir == 1)
-            move(game, RIGHT);
-        if (dir == 2)
-            move(game, UP);
-        if (dir == 3)
-            move(game, DOWN);
+/*
+================================================================================
+Returns a random direction
+================================================================================
+*/
+direction get_random_direction() {
+    int dir = rand() % 4;
+    if (dir == 0)
+        return LEFT;
+    if (dir == 1)
+        return RIGHT;
+    if (dir == 2)
+        return UP;
+    if (dir == 3)
+        return DOWN;
+    return LEFT; // default
+}
+
+/*
+================================================================================
+Play the game with randomized input. If boolean end is specified, play until the
+end.
+================================================================================
+*/
+void play_random(game_state_t *game, int end) {
+
+    if (end) { // play to the end
+        while (!is_array_full(game))
+            move(game, get_random_direction());
+    } else { // play just one round
+        move(game, get_random_direction());
     }
 }
 
+/*
+================================================================================
+Move in desired direction. But if cannot move, choose some other direction
+================================================================================
+*/
+void move_if_can(game_state_t *game, direction dir) {
+    if (move(game, dir)) { // check if can move?
+        return;
+    } else { // if not, try random directions until can
+        for (;;)
+            if (move(game, get_random_direction()))
+                return;
+    }
+}
+
+// Function to calculate the maximum value
 int max(int a, int b) { return a >= b ? a : b; }
 
-void random_ai_play(int delay) {
+/*
+================================================================================
+Decide the next direction based on the score of randomized play
+================================================================================
+*/
+void decide_move(game_state_t *bgame, game_state_t *l, game_state_t *r,
+                 game_state_t *u, game_state_t *d) {
+    // determine the maximum score
+    int maxscore = max(max(l->score, r->score), max(u->score, d->score));
+
+    // choose the best direction based on the score, and try to move the game
+    if (l->score == maxscore) {
+        move_if_can(bgame, LEFT);
+    } else if (r->score == maxscore) {
+        move_if_can(bgame, RIGHT);
+    } else if (u->score == maxscore) {
+        move_if_can(bgame, UP);
+    } else {
+        move_if_can(bgame, DOWN);
+    }
+}
+
+void random_ai_play(int delay, int ai) {
+    // Set random seed
+    srand(time(NULL));
+
     game_state_t *bgame = new_game();
 
     create_random_tile(bgame);
     create_random_tile(bgame);
     print_array(bgame);
 
+    // If AI boolean is not set, just play the game randomly without the "AI"
+    if (!ai) {
+        while (!is_array_full(bgame)) {
+            play_random(bgame, 0);
+            print_array(bgame);
+            usleep(delay * 1000);
+        }
+        end_game(bgame);
+        return;
+    }
+
+    // Play the game with AI until the end
     while (!is_array_full(bgame)) {
         // Make 4 identical copies of the game
         game_state_t *left = copy_game(bgame);
@@ -56,24 +130,14 @@ void random_ai_play(int delay) {
         move(down, DOWN);
 
         // Play every copy to the end with randomized input
-        play_random(left);
-        play_random(right);
-        play_random(up);
-        play_random(down);
+        play_random(left, 1);
+        play_random(right, 1);
+        play_random(up, 1);
+        play_random(down, 1);
 
         // Determine which score is the best and advance the main game with
         // that direction
-        int maxscore =
-            max(max(left->score, right->score), max(up->score, down->score));
-        if (left->score == maxscore) {
-            move(bgame, LEFT);
-        } else if (right->score == maxscore) {
-            move(bgame, RIGHT);
-        } else if (up->score == maxscore) {
-            move(bgame, UP);
-        } else {
-            move(bgame, DOWN);
-        }
+        decide_move(bgame, left, right, up, down);
 
         print_array(bgame);
 
@@ -84,7 +148,7 @@ void random_ai_play(int delay) {
         end_game(down);
 
         if (delay)
-            usleep(1000 * delay);
+            usleep(1000 * delay); // add delay
     }
     end_game(bgame);
 }

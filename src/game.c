@@ -221,7 +221,7 @@ Using a modification flag that is set if something is changed in the array.
 Only add a new tile and process move if a change has happened.
 ================================================================================
 */
-void move(game_state_t *game, direction dir) {
+int move(game_state_t *game, direction dir) {
     int modflag = 0;
     int *flag = &modflag;
 
@@ -265,6 +265,8 @@ void move(game_state_t *game, direction dir) {
     if (modflag) {
         create_random_tile(game);
         game->moves++;
+        return 1;
     }
+    return 0;
     // print_array(game);
 }

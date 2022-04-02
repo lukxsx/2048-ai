@@ -9,8 +9,8 @@
 
 int main(int argc, char **argv) {
     // Process the command line options
-    int opt, ai_mode = 0, delay = 0;
-    while ((opt = getopt(argc, argv, "uart:h")) != -1) {
+    int opt, ai_mode = 0, delay = 0, rand = 1;
+    while ((opt = getopt(argc, argv, "uasrt:h")) != -1) {
         switch (opt) {
         case 'a':
             ai_mode = 1;
@@ -18,8 +18,12 @@ int main(int argc, char **argv) {
         case 'h':
             printusage(argv[0]);
             exit(EXIT_SUCCESS);
+        case 's':
+            ai_mode = 2;
+            break;
         case 'r':
             ai_mode = 2;
+            rand = 0;
             break;
         case 't':
             delay = atoi(optarg);
@@ -35,7 +39,7 @@ int main(int argc, char **argv) {
         printf("AI mode enabled\n");
 
     } else if (ai_mode == 2) {
-        random_ai_play(delay);
+        random_ai_play(delay, rand);
     } else {
         play(); // play the game normally
     }
