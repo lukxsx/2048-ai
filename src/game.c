@@ -109,6 +109,17 @@ int is_array_full(game_state_t *game) {
     return 1;
 }
 
+int **get_free_tiles(int **game_array) {
+    int **ga = init_game_array();
+    for (int j = 0; j < 4; j++) {
+        for (int i = 0; i < 4; i++) {
+            if (game_array[j][i] == 0)
+                ga[j][i] = 1;
+        }
+    }
+    return ga;
+}
+
 /*
 ================================================================================
 Returns true if a tile on the array is empty
@@ -212,6 +223,17 @@ void move_array(int *array, game_state_t *game, int *modflag) {
     move_all_left(array, 4, modflag);
     combine(array, 4, game, modflag);
     move_all_left(array, 4, modflag);
+}
+
+int can_move(game_state_t *game, direction dir) {
+    game_state_t *temp = copy_game(game);
+    int can = move(temp, dir);
+    end_game(temp);
+    if (can) {
+        return 1;
+    } else {
+        return 0;
+    }
 }
 
 /*

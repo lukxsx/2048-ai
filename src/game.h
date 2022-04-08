@@ -103,4 +103,8 @@ Move array in a specific direction
 */
 int move(game_state_t *game, direction dir);
 
+int can_move(game_state_t *game, direction dir);
+
+int **get_free_tiles(int **game_array);
+
 #endif
