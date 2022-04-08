@@ -8,7 +8,7 @@ typedef struct {
     int moves;
 } game_state_t;
 
-typedef enum movement { LEFT, RIGHT, UP, DOWN } direction;
+typedef enum movement { LEFT, RIGHT, UP, DOWN, NONE } direction;
 
 /*
 ================================================================================
@@ -62,6 +62,13 @@ int is_tile_empty(int **game_array, int x, int y);
 
 /*
 ================================================================================
+Creates a new tile in specific coordinates (no checking)
+================================================================================
+*/
+void create_tile(game_state_t *game, int x, int y, int value);
+
+/*
+================================================================================
 Creates a new tile in random (empty) coordinates
 ================================================================================
 */
@@ -106,5 +113,9 @@ int move(game_state_t *game, direction dir);
 int can_move(game_state_t *game, direction dir);
 
 int **get_free_tiles(int **game_array);
+
+direction which_direction(game_state_t *current, game_state_t *compare);
+
+int compare_game(game_state_t *a, game_state_t *b);
 
 #endif

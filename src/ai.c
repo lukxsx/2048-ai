@@ -1,5 +1,26 @@
+#include <limits.h>
 #include "game.h"
 #include "text_ui.h"
+
+typedef struct {
+    direction dir;
+    int score;
+} move_t;
+
+int rate(game_state_t *game) {
+    int count = 0, sum = 0;
+
+    for (int j = 0; j < 4; j++) {
+        for (int i = 0; i < 4; i++) {
+            int tile = game->game_array[j][i];
+            sum += tile;
+            if (tile)
+                count++;
+        }
+    }
+
+    return sum / count;
+}
 
 int *available_moves_max(game_state_t *game) {
     static int av[4] = {0, 0, 0, 0};
@@ -34,27 +55,101 @@ int is_terminal(game_state_t *game, int min) {
     }
 }
 
-int maximize(game_state_t *game) { return 0; }
-
-int minimize(game_state_t *game) { return 0; }
-
-int rate(game_state_t *game) {
-    int count = 0, sum = 0;
-
-    for (int j = 0; j < 4; j++) {
-        for (int i = 0; i < 4; i++) {
-            int tile = game->game_array[j][i];
-            sum += tile;
-            if (tile)
-                count++;
-        }
+direction int_to_dir(int i) {
+    switch (i) {
+        case 0:
+        return LEFT;
+        case 1:
+        return RIGHT;
+        case 2:
+        return UP;
+        case 3:
+        return DOWN;
     }
+    return LEFT;
+}
 
-    return sum / count;
+
+move_t minimize(game_state_t *game, int a, int b, int depth) {
+    direction worst_move = LEFT;
+    int worst_score = INT_MAX;
+    
+    if (depth == 0 || is_terminal(game, 1)) {
+        move_t r;
+        r.score = rate(game);
+        r.dir = NONE;
+        return r;
+    }
+    
+    depth--;
+    
+    
+    
+    
+    move_t m;
+    m.score = worst_score;
+    m.dir = worst_move;
+    return m;
+}
+
+move_t maximize(game_state_t *game, int a, int b, int depth) {
+    direction best_move = LEFT;
+    int best_score = -1;
+    
+    if (depth == 0 || is_terminal(game, 0)) {
+        move_t r;
+        r.score = rate(game);
+        r.dir = NONE;
+        return r;
+    }
+    
+    depth--;
+    
+    int *maxmoves = available_moves_max(game);
+    for (int i = 0; i < 4; i++) {
+        if (maxmoves[i] != 0) {
+            game_state_t *temp = copy_game(game);
+            move(temp, int_to_dir(i));
+            move_t min = minimize(temp, a, b, depth);
+            
+            if (min.score > best_score) {
+                best_score = min.score;
+                best_move = int_to_dir(i);
+            }
+            
+            if (best_score >= b) break;
+            
+            if (best_score > a) {
+                a = best_score;
+            }
+        }
+        
+    }
+    
+    move_t m;
+    m.score = best_score;
+    m.dir = best_move;
+    return m;
+}
+
+
+
+
+direction get_best_move(game_state_t *game) {
+    return LEFT;
 }
 
 int ai_play(int delay) {
     int score = 0;
-
+    game_state_t *ai_game = new_game();
+    create_random_tile(ai_game);
+    create_random_tile(ai_game);
+    
+    while(!is_array_full(ai_game)) {
+        
+    }
+    
+    score = ai_game->score;
+    end_game(ai_game);
     return score;
 }

@@ -132,6 +132,16 @@ int is_tile_empty(int **game_array, int x, int y) {
         return 1;
 }
 
+
+/*
+================================================================================
+Creates a new tile in specific coordinates (no checking)
+================================================================================
+*/
+void create_tile(game_state_t *game, int x, int y, int value) {
+    game->game_array[y][x] = value;
+}
+
 /*
 ================================================================================
 Creates a new tile in random (empty) coordinates
@@ -152,7 +162,7 @@ void create_random_tile(game_state_t *game) {
         }
     }
 
-    game->game_array[ry][rx] = value;
+    create_tile(game, rx, ry, value);
 }
 
 /*
@@ -234,6 +244,46 @@ int can_move(game_state_t *game, direction dir) {
     } else {
         return 0;
     }
+}
+
+// return 1 if equals
+int compare_game(game_state_t *a, game_state_t *b) {
+    for (int j = 0; j < 4; j++) {
+        for (int i = 0; i < 4; i++) {
+            if (a->game_array[j][i] != b->game_array[j][i])
+                return 0;
+        }
+    }
+    return 1;
+    
+}
+
+
+direction which_direction(game_state_t *current, game_state_t *compare) {
+    direction d = LEFT;
+    if (can_move(current, LEFT)) {
+        game_state_t *temp = copy_game(current);
+        move(temp, LEFT);
+        if (compare_game(compare, temp)) d = LEFT;
+        end_game(temp);
+        return d;
+    }
+    if (can_move(current, RIGHT)) {
+        game_state_t *temp = copy_game(current);
+        move(temp, RIGHT);
+        if (compare_game(compare, temp)) d = RIGHT;
+        end_game(temp);
+        return d;
+    }
+    if (can_move(current, UP)) {
+        game_state_t *temp = copy_game(current);
+        move(temp, UP);
+        if (compare_game(compare, temp)) d = UP;
+        end_game(temp);
+        return d;
+    }
+    
+    return DOWN;
 }
 
 /*
