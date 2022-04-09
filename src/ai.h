@@ -1,22 +1,31 @@
 #ifndef AI_H
 #define AI_H
 
+typedef struct {
+    int **arr;
+    int score;
+} move_t;
+
+typedef struct {
+    int i;
+    int j;
+    int tile;
+} minmove_t;
+
 int ai_play(int delay);
 
-int rate(game_state_t *game);
+int rate(int **arr);
 
-move_t maximize(game_state_t *game, int a, int b, int depth);
+move_t maximize(int **arr, int a, int b, int depth);
 
-move_t minimize(game_state_t *game, int a, int b, int depth);
+move_t minimize(int **arr, int a, int b, int depth);
 
-int *available_moves_max(game_state_t *game);
+int *available_moves_max(int **arr);
 
-position *available_moves_min(game_state_t *game);
-
-int is_terminal(game_state_t *game, int min);
+int is_terminal(int **arr, int min);
 
 direction int_to_dir(int i);
 
-direction get_best_move(game_state_t *game);
+direction get_best_move(int **arr);
 
 #endif

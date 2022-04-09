@@ -75,8 +75,7 @@ int **copy_game_array(int **old) {
     int **new = init_game_array();
 
     for (int i = 0; i < 4; i++) {
-        new[i] =
-            memcpy(new[i], old[i], (4 * sizeof(int)));
+        new[i] = memcpy(new[i], old[i], (4 * sizeof(int)));
     }
     return new;
 }
@@ -92,7 +91,7 @@ game_state_t *copy_game(game_state_t *old) {
     new->moves = old->moves;
 
     new->game_array = copy_game_array(old->game_array);
-    
+
     return new;
 }
 
@@ -144,15 +143,12 @@ int is_tile_empty(int **game_array, int x, int y) {
         return 1;
 }
 
-
 /*
 ================================================================================
 Creates a new tile in specific coordinates (no checking)
 ================================================================================
 */
-void create_tile(game_state_t *game, int x, int y, int value) {
-    game->game_array[y][x] = value;
-}
+void create_tile(int **arr, int x, int y, int value) { arr[y][x] = value; }
 
 /*
 ================================================================================
@@ -174,7 +170,7 @@ void create_random_tile(game_state_t *game) {
         }
     }
 
-    create_tile(game, rx, ry, value);
+    create_tile(game->game_array, rx, ry, value);
 }
 
 /*
@@ -266,7 +262,7 @@ int can_move_left(int **arr) {
         }
         if (x > -1) {
             for (int i = x; i > 0; i--) {
-                if (!(arr[j][i-1]) || arr[j][i] == arr[j][i-1]) {
+                if (!(arr[j][i - 1]) || arr[j][i] == arr[j][i - 1]) {
                     return 1;
                 }
             }
@@ -278,7 +274,7 @@ int can_move_left(int **arr) {
 int can_move_right(int **arr) {
     for (int j = 0; j < 4; j++) {
         int x = -1;
-        
+
         for (int u = 0; u < 4; u++) {
         }
         for (int i = 0; i < 4; i++) {
@@ -289,7 +285,8 @@ int can_move_right(int **arr) {
         }
         if (x > -1) {
             for (int i = x; i < 3; i++) {
-                if (!(arr[j][i+1]) || arr[j][i] == arr[j][i+1]) return 1;
+                if (!(arr[j][i + 1]) || arr[j][i] == arr[j][i + 1])
+                    return 1;
             }
         }
     }
@@ -307,13 +304,13 @@ int can_move_down(int **arr) {
         }
         if (x > -1) {
             for (int j = x; j < 3; j++) {
-                if (!(arr[j+1][i]) || arr[j][i] == arr[j+1][i]) return 1;
+                if (!(arr[j + 1][i]) || arr[j][i] == arr[j + 1][i])
+                    return 1;
             }
         }
     }
     return 0;
 }
-
 
 int can_move_up(int **arr) {
     for (int i = 0; i < 4; i++) {
@@ -328,7 +325,7 @@ int can_move_up(int **arr) {
         }
         if (x > -1) {
             for (int j = x; j > 0; j--) {
-                if (!(arr[j-1][i]) || arr[j][i] == arr[j-1][i]) {
+                if (!(arr[j - 1][i]) || arr[j][i] == arr[j - 1][i]) {
                     return 1;
                 }
             }
@@ -343,27 +340,27 @@ Check if an array can be moved to specific direction
 ================================================================================
 */
 int can_move(int **arr, direction dir) {
-    if (dir == LEFT) return can_move_left(arr);
-    if (dir == RIGHT) return can_move_right(arr);
-    if (dir == UP) return can_move_up(arr);
-    if (dir == DOWN) return can_move_down(arr);
+    if (dir == LEFT)
+        return can_move_left(arr);
+    if (dir == RIGHT)
+        return can_move_right(arr);
+    if (dir == UP)
+        return can_move_up(arr);
+    if (dir == DOWN)
+        return can_move_down(arr);
     return 0;
 }
 
 // return 1 if equals
-int compare_game(game_state_t *a, game_state_t *b) {
+int compare_array(int **a, int **b) {
     for (int j = 0; j < 4; j++) {
         for (int i = 0; i < 4; i++) {
-            if (a->game_array[j][i] != b->game_array[j][i])
+            if (a[j][i] != b[j][i])
                 return 0;
         }
     }
     return 1;
-    
 }
-
-
-
 
 /*
 ================================================================================
@@ -386,7 +383,7 @@ int move(int **game, direction dir) {
             reverse_array(arr, 4);
         }
     } else if (dir == UP) {
-            for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 4; i++) {
             int temp[4];
             for (int j = 0; j < 4; j++) {
                 temp[j] = game[j][i];
@@ -410,11 +407,9 @@ int move(int **game, direction dir) {
             }
         }
     }
-    
-        
+
     return score;
 }
-
 
 /*
 ================================================================================

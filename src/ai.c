@@ -1,36 +1,74 @@
 #define _GNU_SOURCE
 
-#include <stdlib.h>
 #include <limits.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <time.h>
 #include <unistd.h>
 
 #include "game.h"
+
+#include "ai.h"
 #include "text_ui.h"
 
-typedef struct {
-    direction dir;
-    int score;
-} move_t;
+/* Map integer value to direction enum
+direction int_to_dir(int i) {
+    switch (i) {
+    case 0:
+        return LEFT;
+    case 1:
+        return RIGHT;
+    case 2:
+        return UP;
+    case 3:
+        return DOWN;
+    }
+    return LEFT;
+}
+*/
+move_t maximize(int **arr, int a, int b, int depth);
+move_t minimize(int **arr, int a, int b, int depth);
 
-typedef struct {
-    int x;
-    int y;
-} position;
+int compare_helper(int **orig, int **new, direction dir) {
+    int **temp = copy_game_array(orig);
+    move(temp, dir);
+    int result = compare_array(temp, new);
+    free_game_array(temp);
 
+    return result;
+}
 
-move_t maximize(game_state_t *game, int a, int b, int depth);
-move_t minimize(game_state_t *game, int a, int b, int depth);
+/*
+================================================================================
+A function to determine what direction the array is played
+================================================================================
+*/
+direction which_direction(int **orig, int **new) {
+    if (can_move(orig, LEFT) && compare_helper(orig, new, LEFT))
+        return LEFT;
+    if (can_move(orig, RIGHT) && compare_helper(orig, new, RIGHT))
+        return RIGHT;
+    if (can_move(orig, UP) && compare_helper(orig, new, UP))
+        return UP;
+    if (can_move(orig, DOWN) && compare_helper(orig, new, DOWN))
+        return DOWN;
+    printf("default\n");
+    return LEFT;
+}
 
-
-
-int rate(game_state_t *game) {
+/*
+================================================================================
+Rate game array state
+Returns good score if there are a small amount of large tiles
+and bad score if there are many small tiles
+================================================================================
+*/
+int rate(int **arr) {
     int count = 0, sum = 0;
 
     for (int j = 0; j < 4; j++) {
         for (int i = 0; i < 4; i++) {
-            int tile = game->game_array[j][i];
+            int tile = arr[j][i];
             sum += tile;
             if (tile)
                 count++;
@@ -40,176 +78,221 @@ int rate(game_state_t *game) {
     return sum / count;
 }
 
-int *available_moves_max(game_state_t *game) {
+/*
+================================================================================
+Return all moves in a list that max can make (list index maps to direction)
+1 = can move, 0 = cannot move
+================================================================================
+*/
+int *available_moves_max(int **arr) {
     int *av = calloc(4, sizeof(int));
-    if (can_move(game, LEFT))
+    if (can_move(arr, LEFT))
         av[0] = 1;
-    if (can_move(game, RIGHT))
+    if (can_move(arr, RIGHT))
         av[1] = 1;
-    if (can_move(game, UP))
+    if (can_move(arr, UP))
         av[2] = 1;
-    if (can_move(game, DOWN))
+    if (can_move(arr, DOWN))
         av[3] = 1;
     return av;
 }
 
-position *available_moves_min(game_state_t *game) {
-    position *pos = calloc(16, sizeof(position));
-    int **free_tiles = get_free_tiles(game->game_array);
-    int poscount = 0;
-    
+/*
+================================================================================
+Lists all moves that min can make as minmove_t structs (defined in ai.h)
+Max 32 items. Tile value will be 0 if the move cannot be made.
+================================================================================
+*/
+minmove_t *available_moves_min(int **arr) {
+    minmove_t *moves = calloc(32, sizeof(minmove_t));
+    int **free_tiles = get_free_tiles(arr);
+    int lsize = 0;
     for (int j = 0; j < 4; j++) {
         for (int i = 0; i < 4; i++) {
             if (free_tiles[j][i] == 1) {
-                position p;
-                p.x = i;
-                p.y = j;
-                pos[poscount] = p;
-                poscount++;
+                minmove_t m2;
+                m2.i = i;
+                m2.j = j;
+                m2.tile = 2;
+                moves[lsize] = m2;
+                lsize++;
+                minmove_t m4;
+                m4.i = i;
+                m4.j = j;
+                m4.tile = 4;
+                moves[lsize] = m4;
+                lsize++;
             }
         }
     }
-    free(free_tiles);
-    return pos;
+
+    free_game_array(free_tiles);
+    return moves;
 }
 
-int is_terminal(game_state_t *game, int min) {
+/*
+================================================================================
+Returns true if the game is in a terminal state. The side is chosen with the min
+variable. For max the game is over if no move can be made. For min the game is
+over if no tiles can be placed.
+================================================================================
+*/
+int is_terminal(int **arr, int min) {
     if (!min) {
-        if (can_move(game, LEFT))
+        if (can_move(arr, LEFT))
             return 0;
-        if (can_move(game, RIGHT))
+        if (can_move(arr, RIGHT))
             return 0;
-        if (can_move(game, UP))
+        if (can_move(arr, UP))
             return 0;
-        if (can_move(game, DOWN))
+        if (can_move(arr, DOWN))
             return 0;
         return 1;
     } else {
-        return is_array_full(game);
+        return is_array_full(arr);
     }
 }
 
-direction int_to_dir(int i) {
-    switch (i) {
-        case 0:
-        return LEFT;
-        case 1:
-        return RIGHT;
-        case 2:
-        return UP;
-        case 3:
-        return DOWN;
-    }
-    return LEFT;
-}
+/*
+================================================================================
+Max function of the minimax algorithm
+================================================================================
+*/
+move_t maximize(int **arr, int a, int b, int depth) {
+    move_t this;
+    this.arr = NULL;
+    this.score = -1;
 
+    if (depth == 0 || is_terminal(arr, 0)) {
+        this.score = rate(arr);
+        return this;
+    }
 
-move_t minimize(game_state_t *game, int a, int b, int depth) {
-    printf("MINIZIME\n");
-    usleep(1000*100);
-    direction worst_move = LEFT;
-    int worst_score = INT_MAX;
-    
-    if (depth == 0 || is_terminal(game, 1)) {
-        move_t r;
-        r.score = rate(game);
-        r.dir = NONE;
-        return r;
-    }
-    
-    depth--;
-    
-    position *pos = available_moves_min(game);
-    for (int i = 0; i < 16; i++) {
-        position p = pos[i];
-        game_state_t *temp = new_game();
-        create_tile(temp, p.x, p.y, 2);
-        move_t max = maximize(temp, a, b, depth);
-        if (max.score < worst_score) {
-            worst_score = max.score;
-            worst_move = NONE;
-        }
-        
-        if (worst_score >= a) break;
-        
-        if (worst_score < b) {
-            b = worst_score;
-            
-        }        
-        end_game(temp);
-    }
-    
-    free(pos);
-    move_t m;
-    m.score = worst_score;
-    m.dir = worst_move;
-    return m;
-}
+    depth--; // Reduce depth by one
 
-move_t maximize(game_state_t *game, int a, int b, int depth) {
-    printf("MAXIMIZE\n");
-    usleep(1000*100);
-    direction best_move = LEFT;
-    int best_score = -1;
-    
-    if (depth == 0 || is_terminal(game, 0)) {
-        move_t r;
-        r.score = rate(game);
-        r.dir = NONE;
-        return r;
-    }
-    
-    depth--;
-    
-    int *maxmoves = available_moves_max(game);
-    for (int i = 0; i < 4; i++) {
-        if (maxmoves[i] != 0) {
-            game_state_t *temp = copy_game(game);
-            move(temp, int_to_dir(i));
+    int *max_move_list = available_moves_max(arr); // List of possible moves
+
+    for (int i = 0; i < 4; i++) { // Go over all available moves for max
+        if (max_move_list[i] == 1) {
+
+            // Make a copy of the input array
+            int **temp = copy_game_array(arr);
+
+            // Try each move and run minimize on it
+            // printf("MAX: Trying to move to %d\n", i);
+            move(temp, (direction)i);
             move_t min = minimize(temp, a, b, depth);
-            
-            if (min.score > best_score) {
-                best_score = min.score;
-                best_move = int_to_dir(i);
+            // printf("Min rate: %d\n", min.score);
+            if (min.score > this.score) {
+                // Set this arr as temp, free existing array if any
+                if (this.arr != NULL) {
+                    free_game_array(this.arr);
+                }
+                this.arr = copy_game_array(temp);
+
+                // Now we can free temp array and array returned by minimize
+                free_game_array(temp);
+                if (min.arr != NULL)
+                    free_game_array(min.arr);
+
+                // Replace the score with the better score
+                this.score = min.score;
             }
-            
-            if (best_score >= b) break;
-            
-            if (best_score > a) {
-                a = best_score;
-            }
-            end_game(temp);
+
+            if (this.score >= b)
+                break;
+            if (this.score > a)
+                a = this.score;
         }
-        
     }
-    free(maxmoves);
-    
-    move_t m;
-    m.score = best_score;
-    m.dir = best_move;
-    return m;
+    free(max_move_list); // Free the move list after use
+
+    return this;
 }
 
+/*
+================================================================================
+Min function of the minimax algorithm
+================================================================================
+*/
+move_t minimize(int **arr, int a, int b, int depth) {
+    move_t this;
+    this.arr = NULL;
+    this.score = INT_MAX;
 
+    if (depth == 0 || is_terminal(arr, 1)) {
+        this.score = rate(arr);
+        return this;
+    }
 
+    depth--;
 
-direction get_best_move(game_state_t *game) {
-    move_t best = maximize(game, -1, INT_MAX, 5);
-    
-    return best.dir;
+    minmove_t *mm_list = available_moves_min(arr); // Possible moves for min
+    for (int i = 0; i < 32; i++) { // Go over all available moves for min
+
+        minmove_t mm = mm_list[i]; // Helper variable for list access
+        if (!mm.tile)
+            continue; // skip empty list items
+
+        // Make a copy of the input array
+        int **temp = copy_game_array(arr);
+
+        // Create a tile and run maximize
+        create_tile(temp, mm.i, mm.j, mm.tile);
+        move_t max = maximize(temp, a, b, depth);
+
+        if (max.score < this.score) {
+            // Set this arr as temp, free existing array if any
+            if (this.arr != NULL)
+                free_game_array(this.arr);
+            this.arr = copy_game_array(temp);
+
+            // Now we can free temp array and array returned by maximize
+            free_game_array(temp);
+            if (max.arr != NULL)
+                free_game_array(max.arr);
+
+            // Replace this score with score returned by maximize
+            this.score = max.score;
+        }
+
+        if (this.score <= a)
+            break;
+        if (this.score < b)
+            b = this.score;
+    }
+
+    free(mm_list); // Free minimize move list
+
+    return this;
+}
+
+/*
+================================================================================
+Runs the minimax algorithm and returns the best move it determines
+================================================================================
+*/
+direction get_best_move(int **arr) {
+    move_t m = maximize(arr, -1, INT_MAX, 5);
+
+    direction best = which_direction(arr, m.arr);
+    free_game_array(m.arr);
+    return best;
 }
 
 int ai_play(int delay) {
     int score = 0;
+    srand(time(NULL)); // Set random seed
+
     game_state_t *ai_game = new_game();
     create_random_tile(ai_game);
     create_random_tile(ai_game);
-    while(!is_array_full(ai_game)) {
-        move(ai_game, get_best_move(ai_game));
-        usleep(delay * 1000);
+    print_array(ai_game);
+    while (!is_terminal(ai_game->game_array, 0)) {
+        move_game(ai_game, get_best_move(ai_game->game_array));
         print_array(ai_game);
+        usleep(1000 * delay);
     }
-    
     score = ai_game->score;
     end_game(ai_game);
     return score;

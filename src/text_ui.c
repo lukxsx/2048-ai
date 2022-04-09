@@ -66,19 +66,13 @@ void print_row_lines(int x_size) {
     printf("╣\n");
 }
 
-/*
-================================================================================
-This prints the game board
-================================================================================
-*/
-void print_array(game_state_t *game) {
-    printf("SCORE: %d   MOVES: %d\n", game->score, game->moves);
+void print_only_array(int **arr) {
     print_top(4);
     for (int j = 0; j < 4; j++) {
         print_middle_walls(4);
 
         for (int i = 0; i < 4; i++) {
-            int num = game->game_array[j][i];
+            int num = arr[j][i];
             if (num == 0) {
                 printf("║       ");
             } else if (num >= 1000) {
@@ -103,4 +97,14 @@ void print_array(game_state_t *game) {
         printf("╩═══════");
     }
     printf("╝\n");
+}
+
+/*
+================================================================================
+This prints the game board
+================================================================================
+*/
+void print_array(game_state_t *game) {
+    printf("SCORE: %d   MOVES: %d\n", game->score, game->moves);
+    print_only_array(game->game_array);
 }
