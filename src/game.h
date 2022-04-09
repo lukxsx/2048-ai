@@ -8,6 +8,7 @@ typedef struct {
     int moves;
 } game_state_t;
 
+
 typedef enum movement { LEFT, RIGHT, UP, DOWN, NONE } direction;
 
 /*
@@ -34,6 +35,13 @@ game_state_t *new_game();
 
 /*
 ================================================================================
+Makes a copy of a game array
+================================================================================
+*/
+int **copy_game_array(int **old);
+
+/*
+================================================================================
 Makes a copy of the given game_state_t and returns a pointer to the copy
 ================================================================================
 */
@@ -51,7 +59,7 @@ void end_game(game_state_t *game);
 Returns true if the whole array is full (and the game is over)
 ================================================================================
 */
-int is_array_full(game_state_t *game);
+int is_array_full(int **arr);
 
 /*
 ================================================================================
@@ -79,14 +87,14 @@ void create_random_tile(game_state_t *game);
 Combines the same numbers in an array. Also updates the score.
 ================================================================================
 */
-void combine(int *a, int n, game_state_t *game, int *modflag);
+int combine(int *a, int n);
 
 /*
 ================================================================================
 Helper function that moves all tiles to the left.
 ================================================================================
 */
-void move_all_left(int *a, int n, int *modflag);
+void move_all_left(int *a, int n);
 
 /*
 ================================================================================
@@ -101,20 +109,31 @@ This function performs the actions to move the array.
 First move everything to left side, then run the combination algorithm and then
 move everything to left side again.
 */
-void move_array(int *array, game_state_t *game, int *modflag);
+int move_array(int *array);
 
 /*
 ================================================================================
 Move array in a specific direction
 ================================================================================
 */
-int move(game_state_t *game, direction dir);
+int move(int **game, direction dir);
 
-int can_move(game_state_t *game, direction dir);
+/*
+================================================================================
+Move array in game_state while checking if the move can be made. Return 1 if
+move has made, otherwise 0.
+================================================================================
+*/
+int move_game(game_state_t *game, direction dir);
+
+/*
+================================================================================
+Checks if array can be moved
+================================================================================
+*/
+int can_move(int **arr, direction dir);
 
 int **get_free_tiles(int **game_array);
-
-direction which_direction(game_state_t *current, game_state_t *compare);
 
 int compare_game(game_state_t *a, game_state_t *b);
 

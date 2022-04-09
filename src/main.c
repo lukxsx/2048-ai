@@ -5,7 +5,6 @@
 
 #include "game.h"
 
-#include "ai.h"
 #include "player.h"
 #include "random_ai.h"
 #include "text_ui.h"
@@ -46,7 +45,7 @@ void compare(int n) {
 
     // Test with minimax AI
     for (int i = 0; i < n; i++) {
-        mmax_scores[i] = ai_play(0);
+        //mmax_scores[i] = ai_play(0);
         mmax_sum += mmax_scores[i];
         if (mmax_scores[i] < mmax_min)
             mmax_min = mmax_scores[i];
@@ -110,7 +109,7 @@ int main(int argc, char **argv) {
     }
 
     if (ai_mode == 1) { // start in AI mode
-        ai_play(delay);
+        //ai_play(delay);
 
     } else if (ai_mode == 2) {
         random_ai_play(delay, rand);

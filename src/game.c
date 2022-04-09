@@ -68,6 +68,21 @@ game_state_t *new_game() {
 
 /*
 ================================================================================
+Makes a copy of a game array
+================================================================================
+*/
+int **copy_game_array(int **old) {
+    int **new = init_game_array();
+
+    for (int i = 0; i < 4; i++) {
+        new[i] =
+            memcpy(new[i], old[i], (4 * sizeof(int)));
+    }
+    return new;
+}
+
+/*
+================================================================================
 Makes a copy of the given game_state_t and returns a pointer to the copy
 ================================================================================
 */
@@ -76,11 +91,8 @@ game_state_t *copy_game(game_state_t *old) {
     new->score = old->score;
     new->moves = old->moves;
 
-    new->game_array = init_game_array();
-    for (int i = 0; i < 4; i++) {
-        new->game_array[i] =
-            memcpy(new->game_array[i], old->game_array[i], (4 * sizeof(int)));
-    }
+    new->game_array = copy_game_array(old->game_array);
+    
     return new;
 }
 
@@ -99,10 +111,10 @@ void end_game(game_state_t *game) {
 Returns true if the whole array is full (and the game is over)
 ================================================================================
 */
-int is_array_full(game_state_t *game) {
+int is_array_full(int **arr) {
     for (int j = 0; j < 4; j++) {
         for (int i = 0; i < 4; i++) {
-            if (game->game_array[j][i] == 0)
+            if (arr[j][i] == 0)
                 return 0;
         }
     }
@@ -171,17 +183,18 @@ Combines the same numbers in an array. Also updates the score and sets the
 modification flag if something is changed.
 ================================================================================
 */
-void combine(int *a, int n, game_state_t *game, int *modflag) {
+int combine(int *a, int n) {
+    int score = 0;
     for (int i = 0; i < n; i++) {
         if (i < n - 1) {
             if (a[i] == a[i + 1] && a[i] != 0) {
                 a[i] = a[i] * 2;
-                game->score += a[i];
-                *modflag = 1;
+                score += a[i];
                 a[i + 1] = 0;
             }
         }
     }
+    return score;
 }
 
 /*
@@ -190,7 +203,7 @@ Helper function that moves all tiles to the left. Updates the modification flag
 if something is changed.
 ================================================================================
 */
-void move_all_left(int *a, int n, int *modflag) {
+void move_all_left(int *a, int n) {
     int last = 0;
     for (int i = 0; i < n; i++) {
         if (a[i] == 0) {
@@ -200,7 +213,6 @@ void move_all_left(int *a, int n, int *modflag) {
             a[last] = a[i];
             if (i != last) {
                 a[i] = 0;
-                *modflag = 1;
             }
             last++;
         }
@@ -228,22 +240,114 @@ void reverse_array(int *array, int n) {
 This function performs the actions to move the array.
 First move everything to left side, then run the combination algorithm and then
 move everything to left side again.
+================================================================================
 */
-void move_array(int *array, game_state_t *game, int *modflag) {
-    move_all_left(array, 4, modflag);
-    combine(array, 4, game, modflag);
-    move_all_left(array, 4, modflag);
+int move_array(int *array) {
+    int score = 0;
+    move_all_left(array, 4);
+    score = combine(array, 4);
+    move_all_left(array, 4);
+    return score;
 }
 
-int can_move(game_state_t *game, direction dir) {
-    game_state_t *temp = copy_game(game);
-    int can = move(temp, dir);
-    end_game(temp);
-    if (can) {
-        return 1;
-    } else {
-        return 0;
+/*
+================================================================================
+Functions to check if an array can be moved to different directions
+================================================================================
+*/
+int can_move_left(int **arr) {
+    for (int j = 0; j < 4; j++) {
+        int x = -1;
+        for (int i = 3; i > -1; i--) {
+            if (arr[j][i] != 0) {
+                x = i;
+                break;
+            }
+        }
+        if (x > -1) {
+            for (int i = x; i > 0; i--) {
+                if (!(arr[j][i-1]) || arr[j][i] == arr[j][i-1]) {
+                    return 1;
+                }
+            }
+        }
     }
+    return 0;
+}
+
+int can_move_right(int **arr) {
+    for (int j = 0; j < 4; j++) {
+        int x = -1;
+        
+        for (int u = 0; u < 4; u++) {
+        }
+        for (int i = 0; i < 4; i++) {
+            if (arr[j][i] != 0) {
+                x = i;
+                break;
+            }
+        }
+        if (x > -1) {
+            for (int i = x; i < 3; i++) {
+                if (!(arr[j][i+1]) || arr[j][i] == arr[j][i+1]) return 1;
+            }
+        }
+    }
+    return 0;
+}
+
+int can_move_down(int **arr) {
+    for (int i = 0; i < 4; i++) {
+        int x = -1;
+        for (int j = 0; j < 4; j++) {
+            if (arr[j][i] != 0) {
+                x = j;
+                break;
+            }
+        }
+        if (x > -1) {
+            for (int j = x; j < 3; j++) {
+                if (!(arr[j+1][i]) || arr[j][i] == arr[j+1][i]) return 1;
+            }
+        }
+    }
+    return 0;
+}
+
+
+int can_move_up(int **arr) {
+    for (int i = 0; i < 4; i++) {
+        for (int u = 0; u < 4; u++) {
+        }
+        int x = -1;
+        for (int j = 3; j > -1; j--) {
+            if (arr[j][i] != 0) {
+                x = j;
+                break;
+            }
+        }
+        if (x > -1) {
+            for (int j = x; j > 0; j--) {
+                if (!(arr[j-1][i]) || arr[j][i] == arr[j-1][i]) {
+                    return 1;
+                }
+            }
+        }
+    }
+    return 0;
+}
+
+/*
+================================================================================
+Check if an array can be moved to specific direction
+================================================================================
+*/
+int can_move(int **arr, direction dir) {
+    if (dir == LEFT) return can_move_left(arr);
+    if (dir == RIGHT) return can_move_right(arr);
+    if (dir == UP) return can_move_up(arr);
+    if (dir == DOWN) return can_move_down(arr);
+    return 0;
 }
 
 // return 1 if equals
@@ -259,86 +363,71 @@ int compare_game(game_state_t *a, game_state_t *b) {
 }
 
 
-direction which_direction(game_state_t *current, game_state_t *compare) {
-    direction d = LEFT;
-    if (can_move(current, LEFT)) {
-        game_state_t *temp = copy_game(current);
-        move(temp, LEFT);
-        if (compare_game(compare, temp)) d = LEFT;
-        end_game(temp);
-        return d;
-    }
-    if (can_move(current, RIGHT)) {
-        game_state_t *temp = copy_game(current);
-        move(temp, RIGHT);
-        if (compare_game(compare, temp)) d = RIGHT;
-        end_game(temp);
-        return d;
-    }
-    if (can_move(current, UP)) {
-        game_state_t *temp = copy_game(current);
-        move(temp, UP);
-        if (compare_game(compare, temp)) d = UP;
-        end_game(temp);
-        return d;
-    }
-    
-    return DOWN;
-}
+
 
 /*
 ================================================================================
-This function moves the tiles to specified direction.
-Using a modification flag that is set if something is changed in the array.
-Only add a new tile and process move if a change has happened.
+This function moves the tiles to specified direction without any checks.
+Returns the score.
 ================================================================================
 */
-int move(game_state_t *game, direction dir) {
-    int modflag = 0;
-    int *flag = &modflag;
+int move(int **game, direction dir) {
+    int score = 0;
 
     if (dir == LEFT) {
         for (int i = 0; i < 4; i++) {
-            move_array(game->game_array[i], game, flag);
+            score += move_array(game[i]);
         }
     } else if (dir == RIGHT) {
         for (int i = 0; i < 4; i++) {
-            int *arr = game->game_array[i];
+            int *arr = game[i];
             reverse_array(arr, 4);
-            move_array(arr, game, flag);
+            score += move_array(arr);
             reverse_array(arr, 4);
         }
     } else if (dir == UP) {
-        for (int i = 0; i < 4; i++) {
+            for (int i = 0; i < 4; i++) {
             int temp[4];
             for (int j = 0; j < 4; j++) {
-                temp[j] = game->game_array[j][i];
+                temp[j] = game[j][i];
             }
-            move_array(temp, game, flag);
+            score += move_array(temp);
             for (int j = 0; j < 4; j++) {
-                game->game_array[j][i] = temp[j];
+                game[j][i] = temp[j];
             }
         }
     } else if (dir == DOWN) {
         for (int i = 0; i < 4; i++) {
             int temp[4];
             for (int j = 0; j < 4; j++) {
-                temp[j] = game->game_array[j][i];
+                temp[j] = game[j][i];
             }
             reverse_array(temp, 4);
-            move_array(temp, game, flag);
+            score += move_array(temp);
             reverse_array(temp, 4);
             for (int j = 0; j < 4; j++) {
-                game->game_array[j][i] = temp[j];
+                game[j][i] = temp[j];
             }
         }
     }
+    
+        
+    return score;
+}
 
-    if (modflag) {
-        create_random_tile(game);
+
+/*
+================================================================================
+Move array in game_state while checking if the move can be made. Return 1 if
+move has made, otherwise 0.
+================================================================================
+*/
+int move_game(game_state_t *game, direction dir) {
+    if (can_move(game->game_array, dir)) {
+        game->score += move(game->game_array, dir);
         game->moves++;
+        create_random_tile(game);
         return 1;
     }
     return 0;
-    // print_array(game);
 }

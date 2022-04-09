@@ -47,10 +47,10 @@ end.
 void play_random(game_state_t *game, int end) {
 
     if (end) { // play to the end
-        while (!is_array_full(game))
-            move(game, get_random_direction());
+        while (!is_array_full(game->game_array))
+            move_game(game, get_random_direction());
     } else { // play just one round
-        move(game, get_random_direction());
+        move_game(game, get_random_direction());
     }
 }
 
@@ -60,12 +60,13 @@ Move in desired direction. But if cannot move, choose some other direction
 ================================================================================
 */
 void move_if_can(game_state_t *game, direction dir) {
-    if (move(game, dir)) { // check if can move?
+    if (move_game(game, dir)) { // check if can move?
         return;
     } else { // if not, try random directions until can
         for (;;)
-            if (move(game, get_random_direction()))
+            if (move_game(game, get_random_direction())) {
                 return;
+            }
     }
 }
 
@@ -113,7 +114,7 @@ int random_ai_play(int delay, int ai) {
 
     // If AI boolean is not set, just play the game randomly without the "AI"
     if (!ai) {
-        while (!is_array_full(bgame)) {
+        while (!is_array_full(bgame->game_array)) {
             play_random(bgame, 0);
             print_array(bgame);
             usleep(delay * 1000);
@@ -124,7 +125,7 @@ int random_ai_play(int delay, int ai) {
     }
 
     // Play the game with AI until the end
-    while (!is_array_full(bgame)) {
+    while (!is_array_full(bgame->game_array)) {
         // Make 4 identical copies of the game
         game_state_t *left = copy_game(bgame);
         game_state_t *right = copy_game(bgame);
@@ -132,10 +133,10 @@ int random_ai_play(int delay, int ai) {
         game_state_t *down = copy_game(bgame);
 
         // Advance each of these games to different directions
-        move(left, LEFT);
-        move(right, RIGHT);
-        move(up, UP);
-        move(down, DOWN);
+        move_game(left, LEFT);
+        move_game(right, RIGHT);
+        move_game(up, UP);
+        move_game(down, DOWN);
 
         // Play every copy to the end with randomized input
         play_random(left, 1);

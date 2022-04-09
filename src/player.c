@@ -35,23 +35,23 @@ void play() {
     // Main game loop
     for (;;) {
         // End the game if the array is full
-        if (is_array_full(game))
+        if (is_array_full(game->game_array))
             break;
 
         // Process input
         char key = getchar();
         switch (key) {
         case 'w':
-            move(game, UP);
+            move_game(game, UP);
             break;
         case 'a':
-            move(game, LEFT);
+            move_game(game, LEFT);
             break;
         case 's':
-            move(game, DOWN);
+            move_game(game, DOWN);
             break;
         case 'd':
-            move(game, RIGHT);
+            move_game(game, RIGHT);
             break;
         default:
             break;
