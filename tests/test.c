@@ -185,18 +185,234 @@ START_TEST(test_move_array3) {
 }
 END_TEST
 
-Suite *game_suite(void) {
+START_TEST(test_get_free_tiles) {
+    int **arr = init_game_array();
+    create_tile(arr, 0, 0, 2);
+    create_tile(arr, 2, 3, 2);
+    int **fr = get_free_tiles(arr);
+    ck_assert_int_eq(fr[1][1], 1);
+    ck_assert_int_eq(fr[0][0], 0);
+    free_game_array(fr);
+    free_game_array(arr);
+}
+END_TEST
+
+START_TEST(test_can_move_left1) {
+    int **arr = init_game_array();
+
+    arr[1][0] = 2;
+    arr[2][0] = 2;
+
+    ck_assert_int_eq(can_move(arr, LEFT), 0);
+
+    free_game_array(arr);
+}
+END_TEST
+
+START_TEST(test_can_move_left2) {
+    int **arr = init_game_array();
+
+    arr[1][2] = 2;
+    arr[2][2] = 2;
+
+    ck_assert_int_eq(can_move(arr, LEFT), 1);
+
+    free_game_array(arr);
+}
+END_TEST
+
+START_TEST(test_can_move_left3) {
+    int **arr = init_game_array();
+
+    arr[1][2] = 2;
+    arr[1][3] = 2;
+
+    ck_assert_int_eq(can_move(arr, LEFT), 1);
+
+    free_game_array(arr);
+}
+END_TEST
+
+START_TEST(test_can_move_left4) {
+    int **arr = init_game_array();
+
+    arr[1][0] = 2;
+    arr[1][1] = 4;
+
+    ck_assert_int_eq(can_move(arr, LEFT), 0);
+
+    free_game_array(arr);
+}
+END_TEST
+
+START_TEST(test_can_move_right1) {
+    int **arr = init_game_array();
+
+    arr[1][3] = 2;
+    arr[2][3] = 2;
+
+    ck_assert_int_eq(can_move(arr, RIGHT), 0);
+
+    free_game_array(arr);
+}
+END_TEST
+
+START_TEST(test_can_move_right2) {
+    int **arr = init_game_array();
+
+    arr[1][0] = 2;
+    arr[2][0] = 2;
+
+    ck_assert_int_eq(can_move(arr, RIGHT), 1);
+
+    free_game_array(arr);
+}
+END_TEST
+
+START_TEST(test_can_move_right3) {
+    int **arr = init_game_array();
+
+    arr[1][2] = 2;
+    arr[1][3] = 2;
+
+    ck_assert_int_eq(can_move(arr, RIGHT), 1);
+
+    free_game_array(arr);
+}
+END_TEST
+
+START_TEST(test_can_move_right4) {
+    int **arr = init_game_array();
+
+    arr[1][2] = 2;
+    arr[1][3] = 4;
+
+    ck_assert_int_eq(can_move(arr, RIGHT), 0);
+
+    free_game_array(arr);
+}
+END_TEST
+
+START_TEST(test_can_move_up1) {
+    int **arr = init_game_array();
+
+    arr[0][0] = 2;
+    arr[1][0] = 2;
+
+    ck_assert_int_eq(can_move(arr, UP), 1);
+
+    free_game_array(arr);
+}
+END_TEST
+
+START_TEST(test_can_move_up2) {
+    int **arr = init_game_array();
+
+    arr[0][0] = 2;
+    arr[1][0] = 4;
+
+    ck_assert_int_eq(can_move(arr, UP), 0);
+
+    free_game_array(arr);
+}
+END_TEST
+
+START_TEST(test_can_move_up3) {
+    int **arr = init_game_array();
+
+    arr[0][2] = 2;
+    arr[0][3] = 2;
+
+    ck_assert_int_eq(can_move(arr, UP), 0);
+
+    free_game_array(arr);
+}
+END_TEST
+
+START_TEST(test_can_move_up4) {
+    int **arr = init_game_array();
+
+    arr[1][2] = 2;
+    arr[1][3] = 4;
+
+    ck_assert_int_eq(can_move(arr, UP), 1);
+
+    free_game_array(arr);
+}
+END_TEST
+
+START_TEST(test_can_move_down1) {
+    int **arr = init_game_array();
+
+    arr[0][0] = 2;
+    arr[1][0] = 2;
+
+    ck_assert_int_eq(can_move(arr, DOWN), 1);
+
+    free_game_array(arr);
+}
+END_TEST
+
+START_TEST(test_can_move_down2) {
+    int **arr = init_game_array();
+
+    arr[2][0] = 2;
+    arr[3][0] = 4;
+
+    ck_assert_int_eq(can_move(arr, DOWN), 0);
+
+    free_game_array(arr);
+}
+END_TEST
+
+START_TEST(test_can_move_down3) {
+    int **arr = init_game_array();
+
+    arr[0][1] = 2;
+    arr[0][2] = 2;
+
+    ck_assert_int_eq(can_move(arr, DOWN), 1);
+
+    free_game_array(arr);
+}
+END_TEST
+
+START_TEST(test_can_move_down4) {
+    int **arr = init_game_array();
+
+    arr[3][2] = 2;
+    arr[3][3] = 4;
+
+    ck_assert_int_eq(can_move(arr, DOWN), 0);
+
+    free_game_array(arr);
+}
+END_TEST
+
+/* Test running code */
+
+Suite *array_create_suite(void) {
     Suite *s;
     TCase *tc_core;
-    s = suite_create("game logic checks");
+    s = suite_create("array creation and copying");
     tc_core = tcase_create("Game and array modification");
     tcase_add_test(tc_core, test_array_is_created);
     tcase_add_test(tc_core, test_new_game_is_created);
+    tcase_add_test(tc_core, test_copy_game);
+
+    suite_add_tcase(s, tc_core);
+    return s;
+}
+
+Suite *array_modify_suite(void) {
+    Suite *s;
+    TCase *tc_core;
+    s = suite_create("array moving and processing");
+    tc_core = tcase_create("array moving and processing");
     tcase_add_test(tc_core, test_tile_empty);
     tcase_add_test(tc_core, test_array_full);
     tcase_add_test(tc_core, test_array_not_full);
     tcase_add_test(tc_core, test_random_tile_is_generated);
-    tcase_add_test(tc_core, test_copy_game);
     tcase_add_test(tc_core, test_combine1);
     tcase_add_test(tc_core, test_combine2);
     tcase_add_test(tc_core, test_move_left1);
@@ -206,16 +422,40 @@ Suite *game_suite(void) {
     tcase_add_test(tc_core, test_move_array1);
     tcase_add_test(tc_core, test_move_array2);
     tcase_add_test(tc_core, test_move_array3);
+    tcase_add_test(tc_core, test_get_free_tiles);
+
+    tcase_add_test(tc_core, test_can_move_left1);
+    tcase_add_test(tc_core, test_can_move_left2);
+    tcase_add_test(tc_core, test_can_move_left3);
+    tcase_add_test(tc_core, test_can_move_left4);
+
+    tcase_add_test(tc_core, test_can_move_right1);
+    tcase_add_test(tc_core, test_can_move_right2);
+    tcase_add_test(tc_core, test_can_move_right3);
+    tcase_add_test(tc_core, test_can_move_right4);
+
+    tcase_add_test(tc_core, test_can_move_up1);
+    tcase_add_test(tc_core, test_can_move_up2);
+    tcase_add_test(tc_core, test_can_move_up3);
+    tcase_add_test(tc_core, test_can_move_up4);
+
+    tcase_add_test(tc_core, test_can_move_down1);
+    tcase_add_test(tc_core, test_can_move_down2);
+    tcase_add_test(tc_core, test_can_move_down3);
+    tcase_add_test(tc_core, test_can_move_down4);
     suite_add_tcase(s, tc_core);
     return s;
 }
 
 int main() {
     int number_failed;
-    Suite *s;
+    Suite *s_arr;
+    Suite *s_mod;
     SRunner *sr;
-    s = game_suite();
-    sr = srunner_create(s);
+    s_arr = array_create_suite();
+    s_mod = array_modify_suite();
+    sr = srunner_create(s_arr);
+    srunner_add_suite(sr, s_mod);
     srunner_run_all(sr, CK_NORMAL);
     number_failed = srunner_ntests_failed(sr);
     srunner_free(sr);
