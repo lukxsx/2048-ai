@@ -6,12 +6,13 @@ automatically using the minimax algorithm.
 
 ## Links
 - [Project specification](doc/spec.md)
+- [Test coverage report](https://codecov.io/gh/lukxsx/2048-ai)
+- [Implementation document](doc/implementation.md)
+- [Testing document](doc/testing.md)
 - [Week 1 report](doc/week1_report.md)
 - [Week 2 report](doc/week2_report.md)
 - [Week 3 report](doc/week3_report.md)
 - [Week 4 report](doc/week4_report.md)
-- [Test coverage report](https://codecov.io/gh/lukxsx/2048-ai)
-- [Testing document](doc/testing.md)
 
 ## Building
 ### Prerequisites

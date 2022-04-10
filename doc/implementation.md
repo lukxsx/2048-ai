@@ -162,7 +162,7 @@ tba
 tba
 
 ## Sources
-- (https://en.wikipedia.org/wiki/Minimax)[https://en.wikipedia.org/wiki/Minimax]
-- (https://stackoverflow.com/questions/22342854/what-is-the-optimal-algorithm-for-the-game-2048)[https://stackoverflow.com/questions/22342854/what-is-the-optimal-algorithm-for-the-game-2048]
-- (https://towardsdatascience.com/playing-2048-with-minimax-algorithm-1-d214b136bffb)[https://towardsdatascience.com/playing-2048-with-minimax-algorithm-1-d214b136bffb]
+- [https://en.wikipedia.org/wiki/Minimax](https://en.wikipedia.org/wiki/Minimax)
+- [https://stackoverflow.com/questions/22342854/what-is-the-optimal-algorithm-for-the-game-2048](https://stackoverflow.com/questions/22342854/what-is-the-optimal-algorithm-for-the-game-2048)
+- [https://towardsdatascience.com/playing-2048-with-minimax-algorithm-1-d214b136bffb](https://towardsdatascience.com/playing-2048-with-minimax-algorithm-1-d214b136bffb)
 
