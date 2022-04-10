@@ -42,8 +42,8 @@ make format
 ### Configuration
 The program supports few command line options. If no options are given, the game will start in "normal" mode (the player controls the game)
 ```
--a            Let AI play the game
--s            Use simple AI
+-a            Play with minimax AI
+-s            Use randomizer AI
 -r            Play the game with randomized input
 -t [value]    Delay in milliseconds
 -c            Run in comparison mode

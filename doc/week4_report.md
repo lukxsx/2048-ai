@@ -21,3 +21,9 @@ The minimax AI works now. There is few memory bugs I still need to fix and more
 refactoring is needed.
 
 Time: 4h
+
+## 10.4.2022
+I finished the yesterday's work and wrote the implementation document.
+Slightly behind schedule, sorry.
+
+Time: 2h
