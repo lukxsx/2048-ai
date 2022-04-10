@@ -50,7 +50,7 @@ START_TEST(test_array_full) {
             game->game_array[j][i] = 2; // fill the array
         }
     }
-    ck_assert_int_eq(is_array_full(game), 1);
+    ck_assert_int_eq(is_array_full(game->game_array), 1);
     end_game(game);
 }
 END_TEST
@@ -59,7 +59,7 @@ END_TEST
 START_TEST(test_array_not_full) {
     game_state_t *game = NULL;
     game = new_game();
-    ck_assert_int_eq(is_array_full(game), 0);
+    ck_assert_int_eq(is_array_full(game->game_array), 0);
     end_game(game);
 }
 END_TEST
@@ -69,7 +69,7 @@ END_TEST
 START_TEST(test_random_tile_is_generated) {
     game_state_t *game = new_game();
     create_random_tile(game);
-    ck_assert_int_eq(is_array_full(game), 0);
+    ck_assert_int_eq(is_array_full(game->game_array), 0);
     end_game(game);
 }
 END_TEST
@@ -90,41 +90,27 @@ START_TEST(test_copy_game) {
 END_TEST
 
 START_TEST(test_combine1) {
-    game_state_t *game = new_game();
     int arr[4] = {2, 2, 0, 0};
-    int modflag = 0;
-    int *flag = &modflag;
-
-    combine(arr, 4, game, flag);
+    combine(arr, 4);
 
     ck_assert_int_eq(arr[0], 4);
-    end_game(game);
 }
 END_TEST
 
 START_TEST(test_combine2) {
-    game_state_t *game = new_game();
     int arr[4] = {2, 2, 2, 2};
-    int modflag = 0;
-    int *flag = &modflag;
-
-    combine(arr, 4, game, flag);
+    combine(arr, 4);
 
     ck_assert_int_eq(arr[0], 4);
     ck_assert_int_eq(arr[1], 0);
     ck_assert_int_eq(arr[2], 4);
     ck_assert_int_eq(arr[3], 0);
-
-    end_game(game);
 }
 END_TEST
 
 START_TEST(test_move_left1) {
     int arr[4] = {0, 2, 0, 4};
-    int modflag = 0;
-    int *flag = &modflag;
-
-    move_all_left(arr, 4, flag);
+    move_all_left(arr, 4);
 
     ck_assert_int_eq(arr[0], 2);
     ck_assert_int_eq(arr[1], 4);
@@ -135,10 +121,7 @@ END_TEST
 
 START_TEST(test_move_left2) {
     int arr[4] = {2, 0, 0, 8};
-    int modflag = 0;
-    int *flag = &modflag;
-
-    move_all_left(arr, 4, flag);
+    move_all_left(arr, 4);
 
     ck_assert_int_eq(arr[0], 2);
     ck_assert_int_eq(arr[1], 8);
@@ -149,10 +132,7 @@ END_TEST
 
 START_TEST(test_move_left3) {
     int arr[4] = {0, 0, 0, 2};
-    int modflag = 0;
-    int *flag = &modflag;
-
-    move_all_left(arr, 4, flag);
+    move_all_left(arr, 4);
 
     ck_assert_int_eq(arr[0], 2);
     ck_assert_int_eq(arr[1], 0);
@@ -173,53 +153,35 @@ START_TEST(test_reverse_array) {
 END_TEST
 
 START_TEST(test_move_array1) {
-    game_state_t *game = new_game();
     int arr[4] = {2, 2, 2, 2};
-    int modflag = 0;
-    int *flag = &modflag;
-
-    move_array(arr, game, flag);
+    move_array(arr);
 
     ck_assert_int_eq(arr[0], 4);
     ck_assert_int_eq(arr[1], 4);
     ck_assert_int_eq(arr[2], 0);
     ck_assert_int_eq(arr[3], 0);
-
-    end_game(game);
 }
 END_TEST
 
 START_TEST(test_move_array2) {
-    game_state_t *game = new_game();
     int arr[4] = {8, 0, 0, 8};
-    int modflag = 0;
-    int *flag = &modflag;
-
-    move_array(arr, game, flag);
+    move_array(arr);
 
     ck_assert_int_eq(arr[0], 16);
     ck_assert_int_eq(arr[1], 0);
     ck_assert_int_eq(arr[2], 0);
     ck_assert_int_eq(arr[3], 0);
-
-    end_game(game);
 }
 END_TEST
 
 START_TEST(test_move_array3) {
-    game_state_t *game = new_game();
     int arr[4] = {2, 4, 2, 4};
-    int modflag = 0;
-    int *flag = &modflag;
-
-    move_array(arr, game, flag);
+    move_array(arr);
 
     ck_assert_int_eq(arr[0], 2);
     ck_assert_int_eq(arr[1], 4);
     ck_assert_int_eq(arr[2], 2);
     ck_assert_int_eq(arr[3], 4);
-
-    end_game(game);
 }
 END_TEST
 
