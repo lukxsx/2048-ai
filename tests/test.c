@@ -389,6 +389,52 @@ START_TEST(test_can_move_down4) {
 }
 END_TEST
 
+START_TEST(test_compare_arr1) {
+    int **a = init_game_array();
+    int **b = init_game_array();
+
+    a[0][1] = 2;
+    b[0][1] = 2;
+    a[3][0] = 8;
+    b[3][0] = 8;
+
+    ck_assert_int_eq(compare_array(a, b), 1);
+
+    free_game_array(a);
+    free_game_array(b);
+}
+END_TEST
+
+START_TEST(test_compare_arr2) {
+    int **a = init_game_array();
+    int **b = init_game_array();
+
+    a[2][2] = 2;
+    b[2][2] = 4;
+
+    ck_assert_int_eq(compare_array(a, b), 0);
+
+    free_game_array(a);
+    free_game_array(b);
+}
+END_TEST
+
+START_TEST(test_compare_arr3) {
+    int **a = init_game_array();
+    int **b = init_game_array();
+
+    a[2][2] = 2;
+    b[2][2] = 2;
+    a[1][2] = 4;
+    b[1][3] = 4;
+
+    ck_assert_int_eq(compare_array(a, b), 0);
+
+    free_game_array(a);
+    free_game_array(b);
+}
+END_TEST
+
 /* Test running code */
 
 Suite *array_create_suite(void) {
@@ -399,6 +445,9 @@ Suite *array_create_suite(void) {
     tcase_add_test(tc_core, test_array_is_created);
     tcase_add_test(tc_core, test_new_game_is_created);
     tcase_add_test(tc_core, test_copy_game);
+    tcase_add_test(tc_core, test_compare_arr1);
+    tcase_add_test(tc_core, test_compare_arr2);
+    tcase_add_test(tc_core, test_compare_arr3);
 
     suite_add_tcase(s, tc_core);
     return s;
@@ -423,6 +472,15 @@ Suite *array_modify_suite(void) {
     tcase_add_test(tc_core, test_move_array2);
     tcase_add_test(tc_core, test_move_array3);
     tcase_add_test(tc_core, test_get_free_tiles);
+    suite_add_tcase(s, tc_core);
+    return s;
+}
+
+Suite *array_canmove_suite(void) {
+    Suite *s;
+    TCase *tc_core;
+    s = suite_create("array move rule checking");
+    tc_core = tcase_create("array move rule checking");
 
     tcase_add_test(tc_core, test_can_move_left1);
     tcase_add_test(tc_core, test_can_move_left2);
@@ -451,11 +509,14 @@ int main() {
     int number_failed;
     Suite *s_arr;
     Suite *s_mod;
+    Suite *s_canmove;
     SRunner *sr;
     s_arr = array_create_suite();
     s_mod = array_modify_suite();
+    s_canmove = array_canmove_suite();
     sr = srunner_create(s_arr);
     srunner_add_suite(sr, s_mod);
+    srunner_add_suite(sr, s_canmove);
     srunner_run_all(sr, CK_NORMAL);
     number_failed = srunner_ntests_failed(sr);
     srunner_free(sr);
