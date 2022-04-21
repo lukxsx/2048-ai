@@ -120,7 +120,6 @@ Max function of the minimax algorithm
 */
 move_t maximize(int **arr, int a, int b, int depth) {
     move_t this;
-    this.arr = NULL;
     this.score = -1;
     this.dir = RIGHT;
 
@@ -138,6 +137,7 @@ move_t maximize(int **arr, int a, int b, int depth) {
 
             // Make a copy of the input array
             int **temp = copy_game_array(arr);
+            int temp_free = 0;
 
             // Try each move and run minimize on it
             // printf("MAX: Trying to move to %d\n", i);
@@ -145,26 +145,31 @@ move_t maximize(int **arr, int a, int b, int depth) {
             move_t min = minimize(temp, a, b, depth);
             // printf("Min rate: %d\n", min.score);
             if (min.score > this.score) {
-                // Set this arr as temp, free existing array if any
-                if (this.arr != NULL) {
-                    free_game_array(this.arr);
-                }
-                this.arr = copy_game_array(temp);
+
                 this.dir = (direction)i;
 
                 // Now we can free temp array and array returned by minimize
                 free_game_array(temp);
-                if (min.arr != NULL)
-                    free_game_array(min.arr);
+                temp_free = 1;
 
                 // Replace the score with the better score
                 this.score = min.score;
             }
 
-            if (this.score >= b)
+            if (this.score >= b) {
+                if (!temp_free) {
+                    free_game_array(temp);
+                    temp_free = 1;
+                }
                 break;
+            }
             if (this.score > a)
                 a = this.score;
+
+            if (!temp_free) {
+                free_game_array(temp);
+                temp_free = 1;
+            }
         }
     }
     free(max_move_list); // Free the move list after use
@@ -179,7 +184,6 @@ Min function of the minimax algorithm
 */
 move_t minimize(int **arr, int a, int b, int depth) {
     move_t this;
-    this.arr = NULL;
     this.score = INT_MAX;
     this.dir = RIGHT;
 
@@ -199,30 +203,38 @@ move_t minimize(int **arr, int a, int b, int depth) {
 
         // Make a copy of the input array
         int **temp = copy_game_array(arr);
+        int temp_free = 0;
 
         // Create a tile and run maximize
         create_tile(temp, mm.i, mm.j, mm.tile);
         move_t max = maximize(temp, a, b, depth);
 
         if (max.score < this.score) {
-            // Set this arr as temp, free existing array if any
-            if (this.arr != NULL)
-                free_game_array(this.arr);
-            this.arr = copy_game_array(temp);
 
             // Now we can free temp array and array returned by maximize
             free_game_array(temp);
-            if (max.arr != NULL)
-                free_game_array(max.arr);
+            temp_free = 1;
 
             // Replace this score with score returned by maximize
             this.score = max.score;
         }
 
-        if (this.score <= a)
+        if (this.score <= a) {
+            if (!temp_free) {
+                free_game_array(temp);
+                temp_free = 1;
+            }
             break;
-        if (this.score < b)
+        }
+
+        if (this.score < b) {
             b = this.score;
+        }
+
+        if (!temp_free) {
+            free_game_array(temp);
+            temp_free = 1;
+        }
     }
 
     free(mm_list); // Free minimize move list
@@ -242,7 +254,7 @@ direction get_best_move(int **arr) {
     direction best = m.dir;
     printf("BEST: %d\n", best);
     mss[(int)best]++;
-    free_game_array(m.arr);
+    // free_game_array(m.arr);
     return best;
 }
 
@@ -261,7 +273,7 @@ int ai_play(int delay) {
     }
     score = ai_game->score;
     end_game(ai_game);
-    printf("LEFT: %d RIGHT: %d UP: %d DOWN %d\n", mss[0], mss[1], mss[2],
-           mss[3]);
+    //printf("LEFT: %d RIGHT: %d UP: %d DOWN %d\n", mss[0], mss[1], mss[2],
+    //       mss[3]);
     return score;
 }

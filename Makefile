@@ -1,6 +1,5 @@
 CC = gcc
-CFLAGS = -O2 -std=c99 -pedantic
-DBGFLAGS = -O0 -std=c99 -pedantic -Wall -Werror -g
+CFLAGS = -O2 -std=c99 -pedantic -Wall -Werror
 CHECK_FLAGS := $(shell bash check_flags.sh)
 
 SRC_DIR     = ./src
@@ -16,9 +15,6 @@ all: 2048
 
 2048: $(OBJ_LIST)
 	$(CC) $(CFLAGS) $(OBJ_LIST) -o 2048
-
-debug: $(OBJ_LIST)
-	$(CC) $(DBGFLAGS) $(OBJ_LIST) -o 2048
 
 check:
 	$(CC) -O0 -o test tests/test.c $(filter-out src/main.c, $(wildcard src/*.c)) $(CHECK_FLAGS)

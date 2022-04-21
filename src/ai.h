@@ -2,7 +2,6 @@
 #define AI_H
 
 typedef struct {
-    int **arr;
     int score;
     direction dir;
 } move_t;
