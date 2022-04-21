@@ -148,7 +148,7 @@ int is_tile_empty(int **game_array, int x, int y) {
 Creates a new tile in specific coordinates (no checking)
 ================================================================================
 */
-void create_tile(int **arr, int x, int y, int value) { arr[y][x] = value; }
+void create_tile(int **arr, int i, int j, int value) { arr[j][i] = value; }
 
 /*
 ================================================================================
@@ -349,17 +349,6 @@ int can_move(int **arr, direction dir) {
     if (dir == DOWN)
         return can_move_down(arr);
     return 0;
-}
-
-// return 1 if equals
-int compare_array(int **a, int **b) {
-    for (int j = 0; j < 4; j++) {
-        for (int i = 0; i < 4; i++) {
-            if (a[j][i] != b[j][i])
-                return 0;
-        }
-    }
-    return 1;
 }
 
 /*

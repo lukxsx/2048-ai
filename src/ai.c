@@ -11,50 +11,10 @@
 #include "ai.h"
 #include "text_ui.h"
 
-/* Map integer value to direction enum
-direction int_to_dir(int i) {
-    switch (i) {
-    case 0:
-        return LEFT;
-    case 1:
-        return RIGHT;
-    case 2:
-        return UP;
-    case 3:
-        return DOWN;
-    }
-    return LEFT;
-}
-*/
+int mss[4] = {0};
+
 move_t maximize(int **arr, int a, int b, int depth);
 move_t minimize(int **arr, int a, int b, int depth);
-
-int compare_helper(int **orig, int **new, direction dir) {
-    int **temp = copy_game_array(orig);
-    move(temp, dir);
-    int result = compare_array(temp, new);
-    free_game_array(temp);
-
-    return result;
-}
-
-/*
-================================================================================
-A function to determine what direction the array is played
-================================================================================
-*/
-direction which_direction(int **orig, int **new) {
-    if (can_move(orig, LEFT) && compare_helper(orig, new, LEFT))
-        return LEFT;
-    if (can_move(orig, RIGHT) && compare_helper(orig, new, RIGHT))
-        return RIGHT;
-    if (can_move(orig, UP) && compare_helper(orig, new, UP))
-        return UP;
-    if (can_move(orig, DOWN) && compare_helper(orig, new, DOWN))
-        return DOWN;
-    printf("default\n");
-    return LEFT;
-}
 
 /*
 ================================================================================
@@ -162,6 +122,7 @@ move_t maximize(int **arr, int a, int b, int depth) {
     move_t this;
     this.arr = NULL;
     this.score = -1;
+    this.dir = RIGHT;
 
     if (depth == 0 || is_terminal(arr, 0)) {
         this.score = rate(arr);
@@ -189,6 +150,7 @@ move_t maximize(int **arr, int a, int b, int depth) {
                     free_game_array(this.arr);
                 }
                 this.arr = copy_game_array(temp);
+                this.dir = (direction)i;
 
                 // Now we can free temp array and array returned by minimize
                 free_game_array(temp);
@@ -219,6 +181,7 @@ move_t minimize(int **arr, int a, int b, int depth) {
     move_t this;
     this.arr = NULL;
     this.score = INT_MAX;
+    this.dir = RIGHT;
 
     if (depth == 0 || is_terminal(arr, 1)) {
         this.score = rate(arr);
@@ -275,7 +238,10 @@ Runs the minimax algorithm and returns the best move it determines
 direction get_best_move(int **arr) {
     move_t m = maximize(arr, -1, INT_MAX, 5);
 
-    direction best = which_direction(arr, m.arr);
+    // direction best = which_direction(arr, m.arr);
+    direction best = m.dir;
+    printf("BEST: %d\n", best);
+    mss[(int)best]++;
     free_game_array(m.arr);
     return best;
 }
@@ -295,5 +261,7 @@ int ai_play(int delay) {
     }
     score = ai_game->score;
     end_game(ai_game);
+    printf("LEFT: %d RIGHT: %d UP: %d DOWN %d\n", mss[0], mss[1], mss[2],
+           mss[3]);
     return score;
 }

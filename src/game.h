@@ -72,7 +72,7 @@ int is_tile_empty(int **game_array, int x, int y);
 Creates a new tile in specific coordinates (no checking)
 ================================================================================
 */
-void create_tile(int **arr, int x, int y, int value);
+void create_tile(int **arr, int i, int j, int value);
 
 /*
 ================================================================================
@@ -133,7 +133,5 @@ Checks if array can be moved
 int can_move(int **arr, direction dir);
 
 int **get_free_tiles(int **game_array);
-
-int compare_array(int **a, int **b);
 
 #endif
