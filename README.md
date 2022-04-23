@@ -17,7 +17,8 @@ automatically using the minimax algorithm.
 
 ## Building
 ### Prerequisites
-You need GCC (or any C compiler), Make and Check. (Some university's computer should have these already installed, at least on melkki)
+You need a C compiler (GCC for example), Make and Check. (Some university's computer should have these already installed, at least on melkki).
+For example, in Arch Linux, ```pacman -S base-devel check``` and in Ubuntu/Debian based distros ```apt install build-essential check```.
 
 ### Compiling
 Run the command
