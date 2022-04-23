@@ -38,4 +38,7 @@ malloc calls as in the previous version.
 I changed the type of the game array from int to unsigned int, because there
 cannot be negative numbers in the game table.
 
-Time: 6h
+I refactored the code a lot and improved the comments. I simplified it by
+removing unnecessary functions.
+
+Time: 8h
