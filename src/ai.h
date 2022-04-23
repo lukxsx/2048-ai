@@ -11,6 +11,8 @@ typedef struct {
     int tile;
 } minmove_t;
 
+direction get_best_move(unsigned int *arr);
+
 unsigned int ai_play(int delay, int print);
 
 int rate(unsigned int *arr);

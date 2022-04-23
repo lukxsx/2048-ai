@@ -201,6 +201,12 @@ move_t minimize(unsigned int *arr, int a, int b, int depth) {
     return this;
 }
 
+direction get_best_move(unsigned int *arr) {
+    // get the best move with the minimnax algo
+    move_t best_move = maximize(arr, -1, INT_MAX, 5);
+    return best_move.dir;
+}
+
 unsigned int ai_play(int delay, int print) {
     unsigned int score = 0;
     // set random seed
@@ -219,10 +225,9 @@ unsigned int ai_play(int delay, int print) {
 
     // AI game loop
     while (!is_terminal(ai_game->game_array, 0)) {
-        // get the best move with the minimnax algo
-        move_t best_move = maximize(ai_game->game_array, -1, INT_MAX, 5);
+        
 
-        move_game(ai_game, best_move.dir); // move the array
+        move_game(ai_game, get_best_move(ai_game->game_array)); // move the array
         if (print) {
             print_array(ai_game); // print array if not in quiet mode
         }
