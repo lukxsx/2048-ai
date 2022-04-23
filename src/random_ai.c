@@ -101,7 +101,7 @@ Play the game with simple AI or just play the game to the end with randomized
 input. Returns the score of the game.
 ================================================================================
 */
-int random_ai_play(int delay, int ai) {
+int random_ai_play(int delay, int ai, int print) {
     // Set random seed
     srand(time(NULL));
     int score = 0;
@@ -110,13 +110,15 @@ int random_ai_play(int delay, int ai) {
 
     create_random_tile(bgame);
     create_random_tile(bgame);
-    print_array(bgame);
+    if (print)
+        print_array(bgame);
 
     // If AI boolean is not set, just play the game randomly without the "AI"
     if (!ai) {
         while (!is_array_full(bgame->game_array)) {
             play_random(bgame, 0);
-            print_array(bgame);
+            if (print)
+                print_array(bgame);
             usleep(delay * 1000);
         }
         score = bgame->score;
@@ -148,7 +150,8 @@ int random_ai_play(int delay, int ai) {
         // that direction
         decide_move(bgame, left, right, up, down);
 
-        print_array(bgame);
+        if (print)
+            print_array(bgame);
 
         // Cleanup the copies
         end_game(left);

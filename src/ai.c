@@ -249,31 +249,29 @@ Runs the minimax algorithm and returns the best move it determines
 */
 direction get_best_move(int **arr) {
     move_t m = maximize(arr, -1, INT_MAX, 5);
-
-    // direction best = which_direction(arr, m.arr);
     direction best = m.dir;
-    printf("BEST: %d\n", best);
     mss[(int)best]++;
-    // free_game_array(m.arr);
     return best;
 }
 
-int ai_play(int delay) {
+int ai_play(int delay, int print) {
     int score = 0;
     srand(time(NULL)); // Set random seed
 
     game_state_t *ai_game = new_game();
     create_random_tile(ai_game);
     create_random_tile(ai_game);
-    print_array(ai_game);
+    if (print)
+        print_array(ai_game);
     while (!is_terminal(ai_game->game_array, 0)) {
         move_game(ai_game, get_best_move(ai_game->game_array));
-        print_array(ai_game);
+        if (print)
+            print_array(ai_game); // only print the array if specified
         usleep(1000 * delay);
     }
     score = ai_game->score;
     end_game(ai_game);
-    //printf("LEFT: %d RIGHT: %d UP: %d DOWN %d\n", mss[0], mss[1], mss[2],
-    //       mss[3]);
+    // printf("LEFT: %d RIGHT: %d UP: %d DOWN %d\n", mss[0], mss[1], mss[2],
+    //        mss[3]);
     return score;
 }

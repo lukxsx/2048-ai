@@ -12,7 +12,7 @@ typedef struct {
     int tile;
 } minmove_t;
 
-int ai_play(int delay);
+int ai_play(int delay, int print);
 
 int rate(int **arr);
 
