@@ -13,6 +13,7 @@ automatically using the minimax algorithm.
 - [Week 2 report](doc/week2_report.md)
 - [Week 3 report](doc/week3_report.md)
 - [Week 4 report](doc/week4_report.md)
+- [Week 5 report](doc/week5_report.md)
 
 ## Building
 ### Prerequisites
