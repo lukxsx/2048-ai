@@ -1,8 +1,6 @@
 #ifndef GAME_H
 #define GAME_H
 
-//#define idx(y,x) (((4) * y)+(x))
-
 // A struct to hold the current game state and variables
 typedef struct {
     unsigned int game_array[16];
@@ -15,21 +13,6 @@ typedef enum { LEFT = 0, RIGHT = 1, UP = 2, DOWN = 3 } direction;
 static inline int idx(int y, int x) {
     return (4 * y) + x;
 }
-
-/*
-================================================================================
-Allocate a 4x4 array and set everything to 0.
-Returns NULL in case of memory allocation error.
-================================================================================
-*/
-// int **init_game_array();
-
-/*
-================================================================================
-Frees the allocated memory of the game array
-================================================================================
-*/
-// void free_game_array(int **game_array);
 
 
 /*
@@ -45,20 +28,6 @@ Makes a copy of a game array
 ================================================================================
 */
 void copy_game_array(unsigned int *new, unsigned int *old);
-
-/*
-================================================================================
-Makes a copy of the given game_state_t and returns a pointer to the copy
-================================================================================
-*/
-game_state_t *copy_game(game_state_t *old);
-
-/*
-================================================================================
-Frees the current game
-================================================================================
-*/
-void end_game(game_state_t *game);
 
 /*
 ================================================================================
@@ -141,6 +110,12 @@ Checks if array can be moved
 */
 int can_move(unsigned int *arr, direction dir);
 
+
+/*
+================================================================================
+Writes a list of free tiles to ret pointer
+================================================================================
+*/
 void get_free_tiles(unsigned int *arr, int *ret);
 
 #endif

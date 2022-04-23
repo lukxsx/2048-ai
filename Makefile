@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -O2 -std=c99 -pedantic -Wall -Werror
+CFLAGS = -O2 -std=c11 -pedantic -Wall -Werror
 CHECK_FLAGS := $(shell bash check_flags.sh)
 
 SRC_DIR     = ./src

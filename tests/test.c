@@ -13,7 +13,7 @@ START_TEST(test_new_game_is_created) {
     game = new_game();
     ck_assert_ptr_ne(game, NULL);
     
-    end_game(game);
+    free(game);
 }
 END_TEST
 
@@ -57,24 +57,10 @@ START_TEST(test_random_tile_is_generated) {
     game_state_t *game = new_game();
     create_random_tile(game);
     ck_assert_int_eq(is_array_full(game->game_array), 0);
-    end_game(game);
+    free(game);
 }
 END_TEST
 
-// Tests if copy_game() works and the copy has the same tiles in it's game array
-START_TEST(test_copy_game) {
-    game_state_t *old = new_game();
-    old->game_array[0] = 2; // set value for tile
-    old->game_array[8] = 4;
-    game_state_t *new = copy_game(old); // make a copy
-
-    ck_assert_int_eq(old->game_array[0], new->game_array[0]);
-    ck_assert_int_eq(old->game_array[8], new->game_array[8]);
-
-    end_game(old);
-    end_game(new);
-}
-END_TEST
 
 START_TEST(test_combine1) {
     unsigned int arr[4] = {2, 2, 0, 0};
@@ -352,7 +338,6 @@ Suite *array_create_suite(void) {
     s = suite_create("array creation and copying");
     tc_core = tcase_create("Game and array modification");
     tcase_add_test(tc_core, test_new_game_is_created);
-    tcase_add_test(tc_core, test_copy_game);
 
     suite_add_tcase(s, tc_core);
     return s;

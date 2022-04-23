@@ -8,51 +8,10 @@ Creating game, ending game, allocating arrays and moving and combining tiles
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <strings.h>
 
 #include "game.h"
 #include "text_ui.h"
 
-/*
-================================================================================
-Allocate a 4x4 array and set everything to 0.
-Returns NULL in case of memory allocation error.
-================================================================================
-*/
-/*
-int **init_game_array() {
-    int **game_array;
-    game_array = calloc(4, sizeof(int *));
-    if (!game_array) {
-        return NULL;
-    }
-
-    for (int j = 0; j < 4; j++) {
-        game_array[j] = calloc(4, sizeof(int));
-        if (!game_array[j]) {
-            for (int i = 0; i < j; i++) {
-                free(game_array[i]);
-            }
-            free(game_array);
-            return NULL;
-        }
-    }
-    return game_array;
-}*/
-
-/*
-================================================================================
-Frees the allocated memory of the game array
-================================================================================
-*/
-/*
-void free_game_array(int **game_array) {
-    for (int i = 0; i < 4; i++) {
-        free(game_array[i]);
-    }
-    free(game_array);
-}
-*/
 
 /*
 ================================================================================
@@ -62,13 +21,7 @@ Initializes a new game. Returns a new game_state_t
 
 game_state_t *new_game() {
     game_state_t *game = malloc(sizeof(game_state_t));
-    // game->game_array = init_game_array();
-    bzero(&game->game_array, 16 * sizeof(unsigned int));
-
-    /* if (game->game_array == NULL) {
-         error_exit("Failed to allocate the game array\n");
-     }*/
-
+    memset(game->game_array, 0, 16 * sizeof(unsigned int));
     game->score = 0;
     game->moves = 0;
     return game;
@@ -83,29 +36,6 @@ void copy_game_array(unsigned int *new, unsigned int *old) {
     new = memcpy(new, old, 16 * sizeof(unsigned int));
 }
 
-/*
-================================================================================
-Makes a copy of the given game_state_t and returns a pointer to the copy
-================================================================================
-*/
-game_state_t *copy_game(game_state_t *old) {
-    game_state_t *new = malloc(sizeof(game_state_t));
-    new->score = old->score;
-    new->moves = old->moves;
-    copy_game_array(new->game_array, old->game_array);
-
-    return new;
-}
-
-/*
-================================================================================
-Frees the current game
-================================================================================
-*/
-void end_game(game_state_t *game) {
-    // free_game_array(game->game_array);
-    free(game);
-}
 
 /*
 ================================================================================

@@ -15,6 +15,7 @@ This file has code for a very stupid "AI"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
 #include <unistd.h>
 
 #include "game.h"
@@ -103,7 +104,10 @@ input. Returns the score of the game.
 */
 int random_ai_play(int delay, int ai, int print) {
     // Set random seed
-    srand(time(NULL));
+    struct timespec t;
+    timespec_get(&t, TIME_UTC);
+    srand(t.tv_nsec);
+
     int score = 0;
 
     game_state_t *bgame = new_game();
@@ -122,17 +126,21 @@ int random_ai_play(int delay, int ai, int print) {
             usleep(delay * 1000);
         }
         score = bgame->score;
-        end_game(bgame);
+        free(bgame);
         return score;
     }
 
     // Play the game with AI until the end
     while (!is_array_full(bgame->game_array)) {
         // Make 4 identical copies of the game
-        game_state_t *left = copy_game(bgame);
-        game_state_t *right = copy_game(bgame);
-        game_state_t *up = copy_game(bgame);
-        game_state_t *down = copy_game(bgame);
+        game_state_t *left = calloc(1, sizeof(game_state_t));
+        game_state_t *right = calloc(1, sizeof(game_state_t));
+        game_state_t *up = calloc(1, sizeof(game_state_t));
+        game_state_t *down = calloc(1, sizeof(game_state_t));
+        left = memcpy(left, bgame, sizeof(game_state_t));
+        right = memcpy(right, bgame, sizeof(game_state_t));
+        up = memcpy(up, bgame, sizeof(game_state_t));
+        down = memcpy(down, bgame, sizeof(game_state_t));
 
         // Advance each of these games to different directions
         move_game(left, LEFT);
@@ -154,15 +162,15 @@ int random_ai_play(int delay, int ai, int print) {
             print_array(bgame);
 
         // Cleanup the copies
-        end_game(left);
-        end_game(right);
-        end_game(up);
-        end_game(down);
+        free(left);
+        free(right);
+        free(up);
+        free(down);
 
         if (delay)
             usleep(1000 * delay); // add delay
     }
     score = bgame->score;
-    end_game(bgame);
+    free(bgame);
     return score;
 }

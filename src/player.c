@@ -15,7 +15,9 @@ Functions for playing the game in the terminal. Keyboard input, game loop
 
 void play() {
     // Set random seed
-    srand(time(NULL));
+    struct timespec t;
+    timespec_get(&t, TIME_UTC);
+    srand(t.tv_nsec);
 
     // Change terminal mode to not to echo input
     static struct termios old_terminal, new_terminal;
@@ -60,7 +62,7 @@ void play() {
     }
 
     // Cleanup
-    end_game(game);
+    free(game);
 
     // Return terminal back to the previous state
     tcsetattr(STDIN_FILENO, TCSANOW, &old_terminal);

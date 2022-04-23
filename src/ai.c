@@ -248,7 +248,10 @@ direction get_best_move(unsigned int *arr) {
 
 int ai_play(int delay, int print) {
     int score = 0;
-    srand(time(NULL)); // Set random seed
+    // Set random seed
+    struct timespec t;
+    timespec_get(&t, TIME_UTC);
+    srand(t.tv_nsec);
 
     game_state_t *ai_game = new_game();
     create_random_tile(ai_game);
@@ -263,6 +266,6 @@ int ai_play(int delay, int print) {
         usleep(1000 * delay);
     }
     score = ai_game->score;
-    end_game(ai_game);
+    free(ai_game);
     return score;
 }
