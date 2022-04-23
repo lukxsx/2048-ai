@@ -60,17 +60,15 @@ Initializes a new game. Returns a new game_state_t
 ================================================================================
 */
 
-
-
 game_state_t *new_game() {
     game_state_t *game = malloc(sizeof(game_state_t));
-    //game->game_array = init_game_array();
+    // game->game_array = init_game_array();
     bzero(&game->game_array, 16 * sizeof(unsigned int));
-    
-   /* if (game->game_array == NULL) {
-        error_exit("Failed to allocate the game array\n");
-    }*/
-    
+
+    /* if (game->game_array == NULL) {
+         error_exit("Failed to allocate the game array\n");
+     }*/
+
     game->score = 0;
     game->moves = 0;
     return game;
@@ -105,7 +103,7 @@ Frees the current game
 ================================================================================
 */
 void end_game(game_state_t *game) {
-   // free_game_array(game->game_array);
+    // free_game_array(game->game_array);
     free(game);
 }
 
@@ -115,7 +113,7 @@ Returns true if the whole array is full (and the game is over)
 ================================================================================
 */
 int is_array_full(unsigned int *arr) {
-    
+
     /*
     for (int j = 0; j < 4; j++) {
         for (int i = 0; i < 4; i++) {
@@ -123,21 +121,22 @@ int is_array_full(unsigned int *arr) {
                 return 0;
         }
     }*/
-    
+
     for (int i = 0; i < 16; i++) {
         if (arr[i] == 0) {
             return 0;
         }
     }
-    
+
     return 1;
 }
 
-void get_free_tiles(unsigned int *arr, unsigned int *ret) {
+void get_free_tiles(unsigned int *arr, int *ret) {
     for (int i = 0; i < 16; i++) {
-        if (arr[i] == 0) ret[i] = 1;
+        if (arr[i] == 0)
+            ret[i] = 1;
     }
-    
+
     /*
     for (int j = 0; j < 4; j++) {
         for (int i = 0; i < 4; i++) {
@@ -172,6 +171,15 @@ void create_tile(unsigned int *arr, int y, int x, int value) {
 
 /*
 ================================================================================
+Creates a new tile in index
+================================================================================
+*/
+void create_tile_index(unsigned int *arr, int index, int value) {
+    arr[index] = value;
+}
+
+/*
+================================================================================
 Creates a new tile in random (empty) coordinates
 ================================================================================
 */
@@ -199,8 +207,8 @@ Combines the same numbers in an array. Also updates the score and sets the
 modification flag if something is changed.
 ================================================================================
 */
-int combine(unsigned int *arr) {
-    int score = 0;
+unsigned int combine(unsigned int *arr) {
+    unsigned int score = 0;
     for (int i = 0; i < 4; i++) {
         if (i < 3) {
             if (arr[i] == arr[i + 1] && arr[i] != 0) {
@@ -258,8 +266,8 @@ First move everything to left side, then run the combination algorithm and then
 move everything to left side again.
 ================================================================================
 */
-int move_array(unsigned int *arr) {
-    int score = 0;
+unsigned int move_array(unsigned int *arr) {
+    unsigned int score = 0;
     move_all_left(arr);
     score = combine(arr);
     move_all_left(arr);
@@ -282,7 +290,8 @@ int can_move_left(unsigned int *arr) {
         }
         if (x > -1) {
             for (int i = x; i > 0; i--) {
-                if (!(arr[idx(j, i - 1)]) || arr[idx(j, i)] == arr[idx(j, i - 1)]) {
+                if (!(arr[idx(j, i - 1)]) ||
+                    arr[idx(j, i)] == arr[idx(j, i - 1)]) {
                     return 1;
                 }
             }
@@ -305,7 +314,8 @@ int can_move_right(unsigned int *arr) {
         }
         if (x > -1) {
             for (int i = x; i < 3; i++) {
-                if (!(arr[idx(j, i + 1)]) || arr[idx(j, i)] == arr[idx(j, i + 1)])
+                if (!(arr[idx(j, i + 1)]) ||
+                    arr[idx(j, i)] == arr[idx(j, i + 1)])
                     return 1;
             }
         }
@@ -324,7 +334,8 @@ int can_move_down(unsigned int *arr) {
         }
         if (x > -1) {
             for (int j = x; j < 3; j++) {
-                if (!(arr[idx(j + 1, i)]) || arr[idx(j, i)] == arr[idx(j + 1, i)])
+                if (!(arr[idx(j + 1, i)]) ||
+                    arr[idx(j, i)] == arr[idx(j + 1, i)])
                     return 1;
             }
         }
@@ -345,7 +356,8 @@ int can_move_up(unsigned int *arr) {
         }
         if (x > -1) {
             for (int j = x; j > 0; j--) {
-                if (!(arr[idx(j - 1, i)]) || arr[idx(j, i)] == arr[idx(j - 1, i)]) {
+                if (!(arr[idx(j - 1, i)]) ||
+                    arr[idx(j, i)] == arr[idx(j - 1, i)]) {
                     return 1;
                 }
             }
@@ -377,8 +389,8 @@ This function moves the tiles to specified direction without any checks.
 Returns the score.
 ================================================================================
 */
-int move(unsigned int *arr, direction dir) {
-    int score = 0;
+unsigned int move(unsigned int *arr, direction dir) {
+    unsigned int score = 0;
 
     if (dir == LEFT) {
         for (int i = 0; i < 16; i += 4) {
@@ -395,7 +407,7 @@ int move(unsigned int *arr, direction dir) {
         }
     } else if (dir == UP) {
         unsigned int temp[4];
-            
+
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
                 temp[j] = arr[idx(j, i)];
@@ -407,7 +419,7 @@ int move(unsigned int *arr, direction dir) {
         }
     } else if (dir == DOWN) {
         unsigned int temp[4];
-            
+
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
                 temp[j] = arr[idx(j, i)];

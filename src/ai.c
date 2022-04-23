@@ -3,6 +3,7 @@
 #include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
 #include <unistd.h>
 
@@ -11,10 +12,8 @@
 #include "ai.h"
 #include "text_ui.h"
 
-int mss[4] = {0};
-
-move_t maximize(int **arr, int a, int b, int depth);
-move_t minimize(int **arr, int a, int b, int depth);
+move_t maximize(unsigned int *arr, int a, int b, int depth);
+move_t minimize(unsigned int *arr, int a, int b, int depth);
 
 /*
 ================================================================================
@@ -23,16 +22,15 @@ Returns good score if there are a small amount of large tiles
 and bad score if there are many small tiles
 ================================================================================
 */
-int rate(int **arr) {
-    int count = 0, sum = 0;
+int rate(unsigned int *arr) {
+    int count = 0;
+    unsigned int sum = 0;
 
-    for (int j = 0; j < 4; j++) {
-        for (int i = 0; i < 4; i++) {
-            int tile = arr[j][i];
-            sum += tile;
-            if (tile)
-                count++;
-        }
+    for (int i = 0; i < 16; i++) {
+        unsigned int tile = arr[i];
+        sum += tile;
+        if (tile)
+            count++;
     }
 
     return sum / count;
@@ -44,7 +42,7 @@ Return all moves in a list that max can make (list index maps to direction)
 1 = can move, 0 = cannot move
 ================================================================================
 */
-int *available_moves_max(int **arr) {
+int *available_moves_max(unsigned int *arr) {
     int *av = calloc(4, sizeof(int));
     if (can_move(arr, LEFT))
         av[0] = 1;
@@ -63,30 +61,27 @@ Lists all moves that min can make as minmove_t structs (defined in ai.h)
 Max 32 items. Tile value will be 0 if the move cannot be made.
 ================================================================================
 */
-minmove_t *available_moves_min(int **arr) {
+minmove_t *available_moves_min(unsigned int *arr) {
     minmove_t *moves = calloc(32, sizeof(minmove_t));
-    int **free_tiles = get_free_tiles(arr);
+    int *free_tiles = calloc(16, sizeof(int));
+    get_free_tiles(arr, free_tiles);
     int lsize = 0;
-    for (int j = 0; j < 4; j++) {
-        for (int i = 0; i < 4; i++) {
-            if (free_tiles[j][i] == 1) {
-                minmove_t m2;
-                m2.i = i;
-                m2.j = j;
-                m2.tile = 2;
-                moves[lsize] = m2;
-                lsize++;
-                minmove_t m4;
-                m4.i = i;
-                m4.j = j;
-                m4.tile = 4;
-                moves[lsize] = m4;
-                lsize++;
-            }
+    for (int i = 0; i < 16; i++) {
+        if (free_tiles[i] == 1) {
+            minmove_t m2;
+            m2.index = i;
+            m2.tile = 2;
+            moves[lsize] = m2;
+            lsize++;
+            minmove_t m4;
+            m4.index = i;
+            m4.tile = 4;
+            moves[lsize] = m4;
+            lsize++;
         }
     }
 
-    free_game_array(free_tiles);
+    free(free_tiles);
     return moves;
 }
 
@@ -97,7 +92,7 @@ variable. For max the game is over if no move can be made. For min the game is
 over if no tiles can be placed.
 ================================================================================
 */
-int is_terminal(int **arr, int min) {
+int is_terminal(unsigned int *arr, int min) {
     if (!min) {
         if (can_move(arr, LEFT))
             return 0;
@@ -118,10 +113,10 @@ int is_terminal(int **arr, int min) {
 Max function of the minimax algorithm
 ================================================================================
 */
-move_t maximize(int **arr, int a, int b, int depth) {
+move_t maximize(unsigned int *arr, int a, int b, int depth) {
     move_t this;
     this.score = -1;
-    this.dir = RIGHT;
+    this.dir = UP;
 
     if (depth == 0 || is_terminal(arr, 0)) {
         this.score = rate(arr);
@@ -130,26 +125,24 @@ move_t maximize(int **arr, int a, int b, int depth) {
 
     depth--; // Reduce depth by one
 
-    int *max_move_list = available_moves_max(arr); // List of possible moves
-
-    int **temp = init_game_array();
+    unsigned int temp[16]; // = calloc(16, sizeof(unsigned int));
 
     for (int i = 0; i < 4; i++) { // Go over all available moves for max
-        if (max_move_list[i] == 1) {
+        if (can_move(arr, (direction)i)) {
 
             // Make a copy of the input array
-            copy_game_array(temp, arr);
+            memcpy(temp, arr, 16 * sizeof(unsigned int));
+
             // int temp_free = 0;
 
             // Try each move and run minimize on it
             // printf("MAX: Trying to move to %d\n", i);
             move(temp, (direction)i);
+
             move_t min = minimize(temp, a, b, depth);
             // printf("Min rate: %d\n", min.score);
             if (min.score > this.score) {
-
                 this.dir = (direction)i;
-
                 // Now we can free temp array and array returned by minimize
                 // free_game_array(temp);
                 // temp_free = 1;
@@ -174,8 +167,7 @@ move_t maximize(int **arr, int a, int b, int depth) {
             // }
         }
     }
-    free(max_move_list); // Free the move list after use
-    free_game_array(temp);
+    // free(temp);
     return this;
 }
 
@@ -184,7 +176,7 @@ move_t maximize(int **arr, int a, int b, int depth) {
 Min function of the minimax algorithm
 ================================================================================
 */
-move_t minimize(int **arr, int a, int b, int depth) {
+move_t minimize(unsigned int *arr, int a, int b, int depth) {
     move_t this;
     this.score = INT_MAX;
     this.dir = RIGHT;
@@ -196,21 +188,20 @@ move_t minimize(int **arr, int a, int b, int depth) {
 
     depth--;
 
-    int **temp = init_game_array();
+    unsigned int temp[16]; // = calloc(16, sizeof(unsigned int));
     minmove_t *mm_list = available_moves_min(arr); // Possible moves for min
-    for (int i = 0; i < 32; i++) { // Go over all available moves for min
 
+    for (int i = 0; i < 32; i++) { // Go over all available moves for min
         minmove_t mm = mm_list[i]; // Helper variable for list access
+
         if (!mm.tile)
             continue; // skip empty list items
 
         // Make a copy of the input array
-        // int **temp = copy_game_array(arr);
-        copy_game_array(temp, arr);
-        // int temp_free = 0;
+        memcpy(temp, arr, 16 * sizeof(unsigned int));
 
         // Create a tile and run maximize
-        create_tile(temp, mm.i, mm.j, mm.tile);
+        create_tile_index(temp, mm.index, mm.tile);
         move_t max = maximize(temp, a, b, depth);
 
         if (max.score < this.score) {
@@ -240,9 +231,8 @@ move_t minimize(int **arr, int a, int b, int depth) {
         //     temp_free = 1;
         // }
     }
-
+    // free(temp);
     free(mm_list); // Free minimize move list
-    free_game_array(temp);
     return this;
 }
 
@@ -251,11 +241,9 @@ move_t minimize(int **arr, int a, int b, int depth) {
 Runs the minimax algorithm and returns the best move it determines
 ================================================================================
 */
-direction get_best_move(int **arr) {
+direction get_best_move(unsigned int *arr) {
     move_t m = maximize(arr, -1, INT_MAX, 5);
-    direction best = m.dir;
-    mss[(int)best]++;
-    return best;
+    return m.dir;
 }
 
 int ai_play(int delay, int print) {
@@ -265,8 +253,9 @@ int ai_play(int delay, int print) {
     game_state_t *ai_game = new_game();
     create_random_tile(ai_game);
     create_random_tile(ai_game);
-    if (print)
+    if (print) {
         print_array(ai_game);
+    }
     while (!is_terminal(ai_game->game_array, 0)) {
         move_game(ai_game, get_best_move(ai_game->game_array));
         if (print)
@@ -275,7 +264,5 @@ int ai_play(int delay, int print) {
     }
     score = ai_game->score;
     end_game(ai_game);
-    // printf("LEFT: %d RIGHT: %d UP: %d DOWN %d\n", mss[0], mss[1], mss[2],
-    //        mss[3]);
     return score;
 }

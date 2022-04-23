@@ -5,10 +5,10 @@
 
 #include "game.h"
 
-//#include "ai.h"
+#include "ai.h"
 
 #include "player.h"
-//#include "random_ai.h"
+#include "random_ai.h"
 #include "text_ui.h"
 
 void compare(int n) {
@@ -27,7 +27,7 @@ void compare(int n) {
 
     // Test with random input
     for (int i = 0; i < n; i++) {
-        //rand_scores[i] = random_ai_play(0, 0, 0);
+        rand_scores[i] = random_ai_play(0, 0, 0);
         rand_sum += rand_scores[i];
         if (rand_scores[i] < rand_min)
             rand_min = rand_scores[i];
@@ -37,7 +37,7 @@ void compare(int n) {
 
     // Test with simple AI
     for (int i = 0; i < n; i++) {
-        //simp_scores[i] = random_ai_play(0, 1, 0);
+        simp_scores[i] = random_ai_play(0, 1, 0);
         simp_sum += simp_scores[i];
         if (simp_scores[i] < simp_min)
             simp_min = simp_scores[i];
@@ -47,7 +47,7 @@ void compare(int n) {
 
     // Test with minimax AI
     for (int i = 0; i < n; i++) {
-        //mmax_scores[i] = ai_play(0, 0);
+        mmax_scores[i] = ai_play(0, 0);
         mmax_sum += mmax_scores[i];
         if (mmax_scores[i] < mmax_min)
             mmax_min = mmax_scores[i];
@@ -118,11 +118,11 @@ int main(int argc, char **argv) {
 
     if (ai_mode == 1) { // start in AI mode
         printf("%d\n", print_out);
-        //ai_play(delay, print_out);
+        ai_play(delay, print_out);
 
     } else if (ai_mode == 2) {
         printf("%d%d\n", rand, delay);
-        //random_ai_play(delay, rand, print_out);
+        random_ai_play(delay, rand, print_out);
     } else {
         play(); // play the game normally
     }

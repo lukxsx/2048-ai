@@ -21,7 +21,7 @@ check:
 	@./test
 
 debug:
-	$(CC) -O2 -Wall -Werror -std=c99 -pedantic -o 2048 src/main.c src/player.c src/text_ui.c src/game.c
+	$(CC) -O2 -Wall -Werror -std=c99 -pedantic -g -o 2048 src/main.c src/game.c src/player.c src/text_ui.c src/random_ai.c src/ai.c
 	
 
 codecov:
