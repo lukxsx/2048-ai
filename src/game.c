@@ -12,7 +12,6 @@ Creating game, ending game, allocating arrays and moving and combining tiles
 #include "game.h"
 #include "text_ui.h"
 
-
 /*
 ================================================================================
 Initializes a new game. Returns a new game_state_t
@@ -20,8 +19,10 @@ Initializes a new game. Returns a new game_state_t
 */
 
 game_state_t *new_game() {
-    game_state_t *game = malloc(sizeof(game_state_t));
-    memset(game->game_array, 0, 16 * sizeof(unsigned int));
+    // use calloc in order to zero the memory at the same time
+    game_state_t *game = calloc(1, sizeof(game_state_t));
+
+    // initialize score and moves counter
     game->score = 0;
     game->moves = 0;
     return game;
@@ -29,53 +30,29 @@ game_state_t *new_game() {
 
 /*
 ================================================================================
-Makes a copy of a game array
-================================================================================
-*/
-void copy_game_array(unsigned int *new, unsigned int *old) {
-    new = memcpy(new, old, 16 * sizeof(unsigned int));
-}
-
-
-/*
-================================================================================
 Returns true if the whole array is full (and the game is over)
 ================================================================================
 */
 int is_array_full(unsigned int *arr) {
-
-    /*
-    for (int j = 0; j < 4; j++) {
-        for (int i = 0; i < 4; i++) {
-            if (arr[j][i] == 0)
-                return 0;
-        }
-    }*/
-
     for (int i = 0; i < 16; i++) {
         if (arr[i] == 0) {
-            return 0;
-        }
+            return 0; // loop through the array and return false
+        }             // IMMEDIATELY if not full
     }
 
     return 1;
 }
 
+/*
+================================================================================
+Writes a list of free tiles to the list pointed at ret
+================================================================================
+*/
 void get_free_tiles(unsigned int *arr, int *ret) {
     for (int i = 0; i < 16; i++) {
         if (arr[i] == 0)
             ret[i] = 1;
     }
-
-    /*
-    for (int j = 0; j < 4; j++) {
-        for (int i = 0; i < 4; i++) {
-            if (game_array[j][i] == 0)
-                ga[j][i] = 1;
-        }
-    }
-    return ga;
-    */
 }
 
 /*
@@ -133,19 +110,17 @@ void create_random_tile(game_state_t *game) {
 
 /*
 ================================================================================
-Combines the same numbers in an array. Also updates the score and sets the
-modification flag if something is changed.
+Combines the same numbers in an array (replace the tiles with same number with
+a tile that has the combined value). Returns the score of the combination
 ================================================================================
 */
 unsigned int combine(unsigned int *arr) {
     unsigned int score = 0;
-    for (int i = 0; i < 4; i++) {
-        if (i < 3) {
-            if (arr[i] == arr[i + 1] && arr[i] != 0) {
-                arr[i] = arr[i] * 2;
-                score += arr[i];
-                arr[i + 1] = 0;
-            }
+    for (int i = 0; i < 3; i++) {
+        if (arr[i] == arr[i + 1] && arr[i] != 0) {
+            arr[i] = arr[i] * 2;
+            score += arr[i]; // update score
+            arr[i + 1] = 0;
         }
     }
     return score;
@@ -153,8 +128,7 @@ unsigned int combine(unsigned int *arr) {
 
 /*
 ================================================================================
-Helper function that moves all tiles to the left. Updates the modification flag
-if something is changed.
+Helper function that moves all tiles to the left.
 ================================================================================
 */
 void move_all_left(unsigned int *arr) {
@@ -175,11 +149,11 @@ void move_all_left(unsigned int *arr) {
 
 /*
 ================================================================================
-Reverses one-dimensional array of n length
+Reverses an array
 ================================================================================
 */
 void reverse_array(unsigned int *arr) {
-    int temp[4];
+    unsigned int temp[4];
 
     for (int i = 0; i < 4; i++) {
         temp[3 - i] = arr[i];
@@ -193,7 +167,8 @@ void reverse_array(unsigned int *arr) {
 ================================================================================
 This function performs the actions to move the array.
 First move everything to left side, then run the combination algorithm and then
-move everything to left side again.
+move everything to left side again. The score is taken from the combine
+function.
 ================================================================================
 */
 unsigned int move_array(unsigned int *arr) {
@@ -206,7 +181,8 @@ unsigned int move_array(unsigned int *arr) {
 
 /*
 ================================================================================
-Functions to check if an array can be moved to different directions
+Functions to check if an array can be moved to different directions. All of
+these work basically the same way.
 ================================================================================
 */
 int can_move_left(unsigned int *arr) {
@@ -323,27 +299,27 @@ unsigned int move(unsigned int *arr, direction dir) {
     unsigned int score = 0;
 
     if (dir == LEFT) {
-        for (int i = 0; i < 16; i += 4) {
-            score += move_array(arr + i);
+        for (int i = 0; i < 16; i += 4) { // simply go through every row
+            score += move_array(arr + i); // and run the moving algo
         }
     } else if (dir == RIGHT) {
-        for (int i = 0; i < 16; i += 4) {
-            unsigned int temp[4];
+        for (int i = 0; i < 16; i += 4) { // same as previous, but reverse the
+            unsigned int temp[4];         // array to move it to other direction
             memcpy(temp, (arr + i), 4 * sizeof(unsigned int));
             reverse_array(temp);
             score += move_array(temp);
-            reverse_array(temp);
+            reverse_array(temp); // restore reverse after moving it
             memcpy((arr + i), temp, 4 * sizeof(unsigned int));
         }
     } else if (dir == UP) {
         unsigned int temp[4];
 
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 4; j++) {
+        for (int i = 0; i < 4; i++) {     // convert columns to rows into the
+            for (int j = 0; j < 4; j++) { // temp array
                 temp[j] = arr[idx(j, i)];
             }
             score += move_array(temp);
-            for (int j = 0; j < 4; j++) {
+            for (int j = 0; j < 4; j++) { // and restore back to game array
                 arr[idx(j, i)] = temp[j];
             }
         }
@@ -354,9 +330,9 @@ unsigned int move(unsigned int *arr, direction dir) {
             for (int j = 0; j < 4; j++) {
                 temp[j] = arr[idx(j, i)];
             }
-            reverse_array(temp);
-            score += move_array(temp);
-            reverse_array(temp);
+            reverse_array(temp);       // same as UP, but this time reverse
+            score += move_array(temp); // the array before moving
+            reverse_array(temp);       // and restore reverse after moving
             for (int j = 0; j < 4; j++) {
                 arr[idx(j, i)] = temp[j];
             }

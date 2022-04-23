@@ -14,8 +14,8 @@ This file has code for a very stupid "AI"
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 #include <string.h>
+#include <time.h>
 #include <unistd.h>
 
 #include "game.h"

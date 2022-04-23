@@ -29,30 +29,12 @@ int rate(unsigned int *arr) {
     for (int i = 0; i < 16; i++) {
         unsigned int tile = arr[i];
         sum += tile;
-        if (tile)
+        if (tile) {
             count++;
+        }
     }
 
     return sum / count;
-}
-
-/*
-================================================================================
-Return all moves in a list that max can make (list index maps to direction)
-1 = can move, 0 = cannot move
-================================================================================
-*/
-int *available_moves_max(unsigned int *arr) {
-    int *av = calloc(4, sizeof(int));
-    if (can_move(arr, LEFT))
-        av[0] = 1;
-    if (can_move(arr, RIGHT))
-        av[1] = 1;
-    if (can_move(arr, UP))
-        av[2] = 1;
-    if (can_move(arr, DOWN))
-        av[3] = 1;
-    return av;
 }
 
 /*
@@ -62,12 +44,12 @@ Max 32 items. Tile value will be 0 if the move cannot be made.
 ================================================================================
 */
 minmove_t *available_moves_min(unsigned int *arr) {
-    minmove_t *moves = calloc(32, sizeof(minmove_t));
-    int *free_tiles = calloc(16, sizeof(int));
-    get_free_tiles(arr, free_tiles);
+    minmove_t *moves = calloc(32, sizeof(minmove_t)); // allocate space for
+    int *free_tiles = calloc(16, sizeof(int));        // the move list and
+    get_free_tiles(arr, free_tiles);                  // the return list
     int lsize = 0;
     for (int i = 0; i < 16; i++) {
-        if (free_tiles[i] == 1) {
+        if (free_tiles[i] == 1) { // add both 4 and 2 variants to the list
             minmove_t m2;
             m2.index = i;
             m2.tile = 2;
@@ -114,60 +96,49 @@ Max function of the minimax algorithm
 ================================================================================
 */
 move_t maximize(unsigned int *arr, int a, int b, int depth) {
+    // initialize the return move_t struct
     move_t this;
     this.score = -1;
     this.dir = UP;
 
+    // stop the recursion if we are on the lowest level
     if (depth == 0 || is_terminal(arr, 0)) {
         this.score = rate(arr);
         return this;
     }
 
-    depth--; // Reduce depth by one
+    depth--; // reduce depth by one
 
-    unsigned int temp[16]; // = calloc(16, sizeof(unsigned int));
+    unsigned int temp[16]; // temp array for trying different moves
 
-    for (int i = 0; i < 4; i++) { // Go over all available moves for max
+    // go over all available moves for max and run minimize on them
+    for (int i = 0; i < 4; i++) {
         if (can_move(arr, (direction)i)) {
 
-            // Make a copy of the input array
+            // copy the input array to temp array
             memcpy(temp, arr, 16 * sizeof(unsigned int));
 
-            // int temp_free = 0;
+            move(temp, (direction)i);                 // try moving
+            move_t min = minimize(temp, a, b, depth); // call minimize
 
-            // Try each move and run minimize on it
-            // printf("MAX: Trying to move to %d\n", i);
-            move(temp, (direction)i);
-
-            move_t min = minimize(temp, a, b, depth);
-            // printf("Min rate: %d\n", min.score);
             if (min.score > this.score) {
+                // replace the current direction and score if the returned
+                // values are better
                 this.dir = (direction)i;
-                // Now we can free temp array and array returned by minimize
-                // free_game_array(temp);
-                // temp_free = 1;
-
-                // Replace the score with the better score
                 this.score = min.score;
             }
 
+            // these two checks are for alpha–beta pruning
             if (this.score >= b) {
-                // if (!temp_free) {
-                //     free_game_array(temp);
-                //     temp_free = 1;
-                // }
                 break;
             }
-            if (this.score > a)
-                a = this.score;
 
-            // if (!temp_free) {
-            //     free_game_array(temp);
-            //     temp_free = 1;
-            // }
+            if (this.score > a) {
+                a = this.score;
+            }
         }
     }
-    // free(temp);
+
     return this;
 }
 
@@ -177,95 +148,90 @@ Min function of the minimax algorithm
 ================================================================================
 */
 move_t minimize(unsigned int *arr, int a, int b, int depth) {
+    // initialize the return move_t struct
     move_t this;
     this.score = INT_MAX;
     this.dir = RIGHT;
 
+    // stop the recursion if we are on the lowest level
     if (depth == 0 || is_terminal(arr, 1)) {
         this.score = rate(arr);
         return this;
     }
 
-    depth--;
+    depth--; // reduce depth by one
 
-    unsigned int temp[16]; // = calloc(16, sizeof(unsigned int));
-    minmove_t *mm_list = available_moves_min(arr); // Possible moves for min
+    unsigned int temp[16]; // temp array for trying different moves
 
-    for (int i = 0; i < 32; i++) { // Go over all available moves for min
-        minmove_t mm = mm_list[i]; // Helper variable for list access
+    // get a list of all possible moves for min
+    minmove_t *mm_list = available_moves_min(arr);
+
+    // go over all available moves for min and run maximize on them
+    for (int i = 0; i < 32; i++) {
+        minmove_t mm = mm_list[i]; // helper variable for list access
 
         if (!mm.tile)
             continue; // skip empty list items
 
-        // Make a copy of the input array
+        // copy the input array to temp array
         memcpy(temp, arr, 16 * sizeof(unsigned int));
 
-        // Create a tile and run maximize
+        // create a new tile and run maximize
         create_tile_index(temp, mm.index, mm.tile);
         move_t max = maximize(temp, a, b, depth);
 
+        // replace the current score if the returned score is worse
+        // we don't set the direction here because it's only needed by the
+        // maximizer function
         if (max.score < this.score) {
-
-            // Now we can free temp array and array returned by maximize
-            // free_game_array(temp);
-            // temp_free = 1;
-
-            // Replace this score with score returned by maximize
             this.score = max.score;
         }
 
+        // these two checks are for alpha–beta pruning
         if (this.score <= a) {
-            // if (!temp_free) {
-            //     free_game_array(temp);
-            //     temp_free = 1;
-            // }
             break;
         }
 
         if (this.score < b) {
             b = this.score;
         }
-
-        // if (!temp_free) {
-        //     free_game_array(temp);
-        //     temp_free = 1;
-        // }
     }
-    // free(temp);
-    free(mm_list); // Free minimize move list
+
+    free(mm_list); // free the minimize move list
     return this;
 }
 
-/*
-================================================================================
-Runs the minimax algorithm and returns the best move it determines
-================================================================================
-*/
-direction get_best_move(unsigned int *arr) {
-    move_t m = maximize(arr, -1, INT_MAX, 5);
-    return m.dir;
-}
-
-int ai_play(int delay, int print) {
-    int score = 0;
-    // Set random seed
+unsigned int ai_play(int delay, int print) {
+    unsigned int score = 0;
+    // set random seed
     struct timespec t;
     timespec_get(&t, TIME_UTC);
     srand(t.tv_nsec);
 
+    // create a new game and two initial tiles
     game_state_t *ai_game = new_game();
     create_random_tile(ai_game);
     create_random_tile(ai_game);
+
     if (print) {
-        print_array(ai_game);
+        print_array(ai_game); // don't print the game array if quiet mode
     }
+
+    // AI game loop
     while (!is_terminal(ai_game->game_array, 0)) {
-        move_game(ai_game, get_best_move(ai_game->game_array));
-        if (print)
-            print_array(ai_game); // only print the array if specified
-        usleep(1000 * delay);
+        // get the best move with the minimnax algo
+        move_t best_move = maximize(ai_game->game_array, -1, INT_MAX, 5);
+
+        move_game(ai_game, best_move.dir); // move the array
+        if (print) {
+            print_array(ai_game); // print array if not in quiet mode
+        }
+
+        usleep(1000 * delay); // add delay if specified
     }
-    score = ai_game->score;
+
+    score = ai_game->score; // save the score from the game before freeing
     free(ai_game);
+
     return score;
 }
