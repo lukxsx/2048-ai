@@ -37,7 +37,7 @@ game_state_t *new_game();
 Makes a copy of a game array
 ================================================================================
 */
-int **copy_game_array(int **old);
+void copy_game_array(int **new, int **old);
 
 /*
 ================================================================================

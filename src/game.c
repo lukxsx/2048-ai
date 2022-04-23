@@ -71,13 +71,10 @@ game_state_t *new_game() {
 Makes a copy of a game array
 ================================================================================
 */
-int **copy_game_array(int **old) {
-    int **new = init_game_array();
-
+void copy_game_array(int **new, int **old) {
     for (int i = 0; i < 4; i++) {
         new[i] = memcpy(new[i], old[i], (4 * sizeof(int)));
     }
-    return new;
 }
 
 /*
@@ -89,8 +86,9 @@ game_state_t *copy_game(game_state_t *old) {
     game_state_t *new = malloc(sizeof(game_state_t));
     new->score = old->score;
     new->moves = old->moves;
+    new->game_array = init_game_array();
 
-    new->game_array = copy_game_array(old->game_array);
+    copy_game_array(new->game_array, old->game_array);
 
     return new;
 }

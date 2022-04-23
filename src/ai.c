@@ -132,12 +132,14 @@ move_t maximize(int **arr, int a, int b, int depth) {
 
     int *max_move_list = available_moves_max(arr); // List of possible moves
 
+    int **temp = init_game_array();
+
     for (int i = 0; i < 4; i++) { // Go over all available moves for max
         if (max_move_list[i] == 1) {
 
             // Make a copy of the input array
-            int **temp = copy_game_array(arr);
-            int temp_free = 0;
+            copy_game_array(temp, arr);
+            // int temp_free = 0;
 
             // Try each move and run minimize on it
             // printf("MAX: Trying to move to %d\n", i);
@@ -149,31 +151,31 @@ move_t maximize(int **arr, int a, int b, int depth) {
                 this.dir = (direction)i;
 
                 // Now we can free temp array and array returned by minimize
-                free_game_array(temp);
-                temp_free = 1;
+                // free_game_array(temp);
+                // temp_free = 1;
 
                 // Replace the score with the better score
                 this.score = min.score;
             }
 
             if (this.score >= b) {
-                if (!temp_free) {
-                    free_game_array(temp);
-                    temp_free = 1;
-                }
+                // if (!temp_free) {
+                //     free_game_array(temp);
+                //     temp_free = 1;
+                // }
                 break;
             }
             if (this.score > a)
                 a = this.score;
 
-            if (!temp_free) {
-                free_game_array(temp);
-                temp_free = 1;
-            }
+            // if (!temp_free) {
+            //     free_game_array(temp);
+            //     temp_free = 1;
+            // }
         }
     }
     free(max_move_list); // Free the move list after use
-
+    free_game_array(temp);
     return this;
 }
 
@@ -194,6 +196,7 @@ move_t minimize(int **arr, int a, int b, int depth) {
 
     depth--;
 
+    int **temp = init_game_array();
     minmove_t *mm_list = available_moves_min(arr); // Possible moves for min
     for (int i = 0; i < 32; i++) { // Go over all available moves for min
 
@@ -202,8 +205,9 @@ move_t minimize(int **arr, int a, int b, int depth) {
             continue; // skip empty list items
 
         // Make a copy of the input array
-        int **temp = copy_game_array(arr);
-        int temp_free = 0;
+        // int **temp = copy_game_array(arr);
+        copy_game_array(temp, arr);
+        // int temp_free = 0;
 
         // Create a tile and run maximize
         create_tile(temp, mm.i, mm.j, mm.tile);
@@ -212,18 +216,18 @@ move_t minimize(int **arr, int a, int b, int depth) {
         if (max.score < this.score) {
 
             // Now we can free temp array and array returned by maximize
-            free_game_array(temp);
-            temp_free = 1;
+            // free_game_array(temp);
+            // temp_free = 1;
 
             // Replace this score with score returned by maximize
             this.score = max.score;
         }
 
         if (this.score <= a) {
-            if (!temp_free) {
-                free_game_array(temp);
-                temp_free = 1;
-            }
+            // if (!temp_free) {
+            //     free_game_array(temp);
+            //     temp_free = 1;
+            // }
             break;
         }
 
@@ -231,14 +235,14 @@ move_t minimize(int **arr, int a, int b, int depth) {
             b = this.score;
         }
 
-        if (!temp_free) {
-            free_game_array(temp);
-            temp_free = 1;
-        }
+        // if (!temp_free) {
+        //     free_game_array(temp);
+        //     temp_free = 1;
+        // }
     }
 
     free(mm_list); // Free minimize move list
-
+    free_game_array(temp);
     return this;
 }
 
