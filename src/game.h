@@ -3,9 +3,9 @@
 
 // A struct to hold the current game state and variables
 typedef struct {
-    int **game_array;
-    int score;
-    int moves;
+    unsigned int game_array[16];
+    unsigned int score;
+    unsigned int moves;
 } game_state_t;
 
 typedef enum movement { LEFT = 0, RIGHT = 1, UP = 2, DOWN = 3 } direction;
@@ -37,7 +37,7 @@ game_state_t *new_game();
 Makes a copy of a game array
 ================================================================================
 */
-void copy_game_array(int **new, int **old);
+void copy_game_array(int *unsigned new, unsigned int *old);
 
 /*
 ================================================================================
@@ -58,21 +58,21 @@ void end_game(game_state_t *game);
 Returns true if the whole array is full (and the game is over)
 ================================================================================
 */
-int is_array_full(int **arr);
+int is_array_full(unsigned int *arr);
 
 /*
 ================================================================================
 Returns true if a tile on the array is empty
 ================================================================================
 */
-int is_tile_empty(int **game_array, int x, int y);
+int is_tile_empty(unsigned int *arr, int y, int x);
 
 /*
 ================================================================================
 Creates a new tile in specific coordinates (no checking)
 ================================================================================
 */
-void create_tile(int **arr, int i, int j, int value);
+void create_tile(unsigned int *arr, int y, int x, int value);
 
 /*
 ================================================================================
@@ -86,21 +86,21 @@ void create_random_tile(game_state_t *game);
 Combines the same numbers in an array. Also updates the score.
 ================================================================================
 */
-int combine(int *a, int n);
+int combine(unsigned int *arr, int n);
 
 /*
 ================================================================================
 Helper function that moves all tiles to the left.
 ================================================================================
 */
-void move_all_left(int *a, int n);
+void move_all_left(unsigned int *arr);
 
 /*
 ================================================================================
 Reverses one-dimensional array of n length
 ================================================================================
 */
-void reverse_array(int *array, int n);
+void reverse_array(unsigned int *array);
 
 /*
 ================================================================================
@@ -108,14 +108,14 @@ This function performs the actions to move the array.
 First move everything to left side, then run the combination algorithm and then
 move everything to left side again.
 */
-int move_array(int *array);
+int move_array(unsigned int *arr);
 
 /*
 ================================================================================
 Move array in a specific direction
 ================================================================================
 */
-int move(int **game, direction dir);
+int move(unsigned int *arr, direction dir);
 
 /*
 ================================================================================
@@ -130,8 +130,8 @@ int move_game(game_state_t *game, direction dir);
 Checks if array can be moved
 ================================================================================
 */
-int can_move(int **arr, direction dir);
+int can_move(unsigned int *arr, direction dir);
 
-int **get_free_tiles(int **game_array);
+unsigned int *get_free_tiles(unsigned int *game_array);
 
 #endif
