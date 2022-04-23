@@ -66,13 +66,13 @@ void print_row_lines(int x_size) {
     printf("╣\n");
 }
 
-void print_only_array(int **arr) {
+void print_only_array(unsigned int *arr) {
     print_top(4);
     for (int j = 0; j < 4; j++) {
         print_middle_walls(4);
 
         for (int i = 0; i < 4; i++) {
-            int num = arr[j][i];
+            int num = arr[idx(j, i)];
             if (num == 0) {
                 printf("║       ");
             } else if (num >= 1000) {
@@ -93,7 +93,7 @@ void print_only_array(int **arr) {
         }
     }
     printf("╚═══════");
-    for (int i = 0; i < 4 - 1; i++) {
+    for (int i = 0; i < 3; i++) {
         printf("╩═══════");
     }
     printf("╝\n");

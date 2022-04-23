@@ -20,6 +20,10 @@ check:
 	$(CC) -O0 -o test tests/test.c $(filter-out src/main.c, $(wildcard src/*.c)) $(CHECK_FLAGS)
 	@./test
 
+debug:
+	$(CC) -O2 -Wall -Werror -std=c99 -pedantic -o 2048 src/main.c src/player.c src/text_ui.c src/game.c
+	
+
 codecov:
 	$(CC) -ftest-coverage -fprofile-arcs -O0 -o test tests/test.c $(filter-out src/main.c, $(wildcard src/*.c)) $(CHECK_FLAGS)
 
