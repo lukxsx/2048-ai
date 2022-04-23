@@ -396,27 +396,27 @@ int move(unsigned int *arr, direction dir) {
     } else if (dir == UP) {
         unsigned int temp[4];
             
-        for (int j = 0; j < 4; j++) {
-            for (int i = 0; i < 3; i++) {
-                temp[i] = arr[idx(j, i)];
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                temp[j] = arr[idx(j, i)];
             }
             score += move_array(temp);
-            for (int i = 0; i < 3; i++) {
-                arr[idx(j, i)] = temp[i];
+            for (int j = 0; j < 4; j++) {
+                arr[idx(j, i)] = temp[j];
             }
         }
     } else if (dir == DOWN) {
         unsigned int temp[4];
             
-        for (int j = 0; j < 4; j++) {
-            for (int i = 0; i < 3; i++) {
-                temp[i] = arr[idx(j, i)];
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                temp[j] = arr[idx(j, i)];
             }
             reverse_array(temp);
             score += move_array(temp);
             reverse_array(temp);
-            for (int i = 0; i < 3; i++) {
-                arr[idx(j, i)] = temp[i];
+            for (int j = 0; j < 4; j++) {
+                arr[idx(j, i)] = temp[j];
             }
         }
     }
