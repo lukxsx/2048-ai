@@ -20,3 +20,22 @@ to the new array. Previously this function allocated and returned a pointer to a
 new array with the contents copied. I used this to reduce the mallocs needed in
 the minimax algorithm. Now the same allocation is used when going through all
 possible moves for max or min.
+
+I changed the whole structure of the game array. It used to be an array of
+int-pointers that each pointed to int arrays. This was a bad option in terms of
+cache efficiency. I changed the program so that the entire game board is stored
+in a single 16-element array. The game board is stored there row by row. The
+performance of the minimax AI increased by 50-80% (benchmarks will be released
+later).
+
+The disadvantage is that [][] syntax cannot be used for indexing anymore. I made
+an inline helper function that calculates the correct index in the table with
+the formula y*4+x.
+
+Now the table can be allocated from the stack instead of needing millions of
+malloc calls as in the previous version.
+
+I changed the type of the game array from int to unsigned int, because there
+cannot be negative numbers in the game table.
+
+Time: 6h

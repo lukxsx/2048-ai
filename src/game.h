@@ -1,6 +1,8 @@
 #ifndef GAME_H
 #define GAME_H
 
+//#define idx(y,x) (((4) * y)+(x))
+
 // A struct to hold the current game state and variables
 typedef struct {
     unsigned int game_array[16];
@@ -9,6 +11,10 @@ typedef struct {
 } game_state_t;
 
 typedef enum { LEFT = 0, RIGHT = 1, UP = 2, DOWN = 3 } direction;
+
+static inline int idx(int y, int x) {
+    return (4 * y) + x;
+}
 
 /*
 ================================================================================
@@ -25,7 +31,6 @@ Frees the allocated memory of the game array
 */
 // void free_game_array(int **game_array);
 
-inline int idx(int y, int x) { return (y * 4) + x; }
 
 /*
 ================================================================================
