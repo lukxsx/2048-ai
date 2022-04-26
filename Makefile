@@ -17,15 +17,19 @@ all: 2048
 	$(CC) $(CFLAGS) $(OBJ_LIST) -o 2048
 
 check:
-	$(CC) -O0 -o test tests/test.c $(filter-out src/main.c, $(wildcard src/*.c)) $(CHECK_FLAGS)
-	@./test
+	$(CC) -O0 -o unittest tests/unit_tests.c $(filter-out src/main.c, $(wildcard src/*.c)) $(CHECK_FLAGS)
+	@./unittest
+
+mmaxtest:
+	$(CC) -O0 -o mmax tests/mmax_tests.c $(filter-out src/main.c, $(wildcard src/*.c))
+	@./mmax
 
 debug:
 	$(CC) -O2 -Wall -Werror -std=c99 -pedantic -g -o 2048 src/main.c src/game.c src/player.c src/text_ui.c src/random_ai.c src/ai.c
-	
+
 
 codecov:
-	$(CC) -ftest-coverage -fprofile-arcs -O0 -o test tests/test.c $(filter-out src/main.c, $(wildcard src/*.c)) $(CHECK_FLAGS)
+	$(CC) -ftest-coverage -fprofile-arcs -O0 -o unittest tests/unit_tests.c $(filter-out src/main.c, $(wildcard src/*.c)) $(CHECK_FLAGS)
 
 format:
 	@python format.py	

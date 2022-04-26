@@ -11,6 +11,9 @@
 #include "random_ai.h"
 #include "text_ui.h"
 
+// setting for printing out the array
+const int ARR_PADDING = 0;
+
 void compare(int n) {
     int *rand_scores = calloc(n, sizeof(int));
     int *simp_scores = calloc(n, sizeof(int));

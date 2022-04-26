@@ -9,6 +9,8 @@ This file contains the functions that print the game array to the screen
 
 #include "game.h"
 
+extern const int ARR_PADDING;
+
 /*
 ================================================================================
 Print the help (-h option or with unknown option
@@ -23,7 +25,7 @@ void printusage(char *program_name) {
     fprintf(stderr, "    -s            Use simple AI\n");
     fprintf(stderr, "    -r            Play the game with randomized input\n");
     fprintf(stderr, "    -t [value]    Delay in milliseconds\n");
-    fprintf(stderr, "    -c            Run in comparison mode\n");
+    fprintf(stderr, "    -c [runs]     Run in comparison mode\n");
     fprintf(stderr, "    -h            Show this information\n");
 }
 
@@ -43,6 +45,7 @@ The following are helper functions to print different parts of the game board
 ================================================================================
 */
 void print_top(int x_size) {
+    if (ARR_PADDING) printf("    ");
     printf("╔═══════");
     for (int i = 0; i < x_size - 1; i++) {
         printf("╦═══════");
@@ -51,6 +54,7 @@ void print_top(int x_size) {
 }
 
 void print_middle_walls(int x_size) {
+    if (ARR_PADDING) printf("    ");
     printf("║       ");
     for (int i = 0; i < x_size - 1; i++) {
         printf("║       ");
@@ -59,6 +63,7 @@ void print_middle_walls(int x_size) {
 }
 
 void print_row_lines(int x_size) {
+    if (ARR_PADDING) printf("    ");
     printf("╠═══════");
     for (int i = 0; i < x_size - 1; i++) {
         printf("╬═══════");
@@ -70,7 +75,7 @@ void print_only_array(unsigned int *arr) {
     print_top(4);
     for (int j = 0; j < 4; j++) {
         print_middle_walls(4);
-
+        if (ARR_PADDING) printf("    ");
         for (int i = 0; i < 4; i++) {
             int num = arr[idx(j, i)];
             if (num == 0) {
@@ -92,6 +97,7 @@ void print_only_array(unsigned int *arr) {
             print_row_lines(4);
         }
     }
+    if (ARR_PADDING) printf("    ");
     printf("╚═══════");
     for (int i = 0; i < 3; i++) {
         printf("╩═══════");

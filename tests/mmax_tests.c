@@ -3,6 +3,9 @@
 
 #include "../src/game.h"
 #include "../src/ai.h"
+#include "../src/text_ui.h"
+
+const int ARR_PADDING = 1;
 
 int arr_equal(unsigned int *a, unsigned int *b) {
     for (int i = 0; i < 16; i++) {
@@ -28,15 +31,16 @@ int print_test_scene(char *text, unsigned int *init, unsigned int *res,
     printf("    test \"%s\"\n", text);
     printf("==============================\n");
     printf("  Initial state:\n");
-    print_arr(init);
+    print_only_array(init);
     printf("\n  Test result:\n");
-    print_arr(res);
+    print_only_array(res);
     if (arr_equal(res, goal)) {
-        printf("\n  --> Success\n");
+        printf("\n  --> Success\n\n");
         return 1;
     } else {
-        printf("\n  Test FAILED! Should be:\n");
-        print_arr(goal);
+        printf("\n  --> Failed! Should be:\n");
+        print_only_array(goal);
+        printf("\n");
         return 0;
     }
     
@@ -61,7 +65,7 @@ int run_test(char *text, unsigned int *arr, unsigned int *goal) {
 
 
 int ai_test1() {
-    unsigned int orig[16] =  { 2, 2, 2, 2,
+    unsigned int orig[16] = { 2, 2, 2, 2,
                               0, 0, 0, 0,
                               0, 4, 0, 0,
                               0, 4, 0, 0 };
@@ -75,11 +79,27 @@ int ai_test1() {
     return run_test("should move left", orig, goal);
 }
 
+int ai_test2() {
+    unsigned int orig[16] = { 0, 0, 0, 2,
+                              4, 4, 0, 2,
+                              0, 0, 0, 2,
+                              0, 0, 0, 2 };
+                              
+    unsigned int goal[16] = { 4, 4, 0, 4,
+                              0, 0, 0, 4,
+                              0, 0, 0, 0,
+                              0, 0, 0, 0 };
+                        
+    
+    return run_test("should move up", orig, goal);
+}
+
 
 int main(void) {
     int pass = 0;
-    int ntests = 1;
+    int ntests = 2;
     pass += ai_test1();
+    pass += ai_test2();
     
     printf("Passed %d / %d tests\n", pass, ntests);
 }

@@ -11,7 +11,7 @@ jobs:
       - name: Test
         run: |
           make codecov
-          ./test
+          ./unittest
           gcov -abcfu game.c
       - name: Upload
         uses: codecov/codecov-action@v2
