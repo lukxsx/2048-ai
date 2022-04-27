@@ -11,7 +11,7 @@ START_TEST(test_new_game_is_created) {
     game_state_t *game = NULL;
     game = new_game();
     ck_assert_ptr_ne(game, NULL);
-    
+
     free(game);
 }
 END_TEST
@@ -19,10 +19,7 @@ END_TEST
 // Create a tile in a position 1,1 and test if the is_tile_empty()
 // returns correctly
 START_TEST(test_tile_empty) {
-    unsigned int arr[16] = {0, 0, 0, 0,
-                            0, 0, 0, 0,
-                            0, 2, 0, 0,
-                            0, 0, 0, 0};
+    unsigned int arr[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0};
 
     ck_assert_int_eq(is_tile_empty(arr, 2, 1), 0);
     ck_assert_int_eq(is_tile_empty(arr, 1, 1), 1);
@@ -31,21 +28,15 @@ END_TEST
 
 // Test that is_array_full returns correctly when array is full
 START_TEST(test_array_full) {
-    unsigned int arr[16] = {8, 8, 8, 8,
-                            8, 8, 8, 8,
-                            8, 8, 8, 8,
-                            8, 8, 8, 8};    
+    unsigned int arr[16] = {8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8};
     ck_assert_int_eq(is_array_full(arr), 1);
 }
 END_TEST
 
 // Test that is_array_full returns correctly when array is not full
 START_TEST(test_array_not_full) {
-    unsigned int arr[16] = {0, 2, 0, 0,
-                            0, 0, 2, 0,
-                            0, 2, 0, 0,
-                            0, 0, 0, 0};
-    
+    unsigned int arr[16] = {0, 2, 0, 0, 0, 0, 2, 0, 0, 2, 0, 0, 0, 0, 0, 0};
+
     ck_assert_int_eq(is_array_full(arr), 0);
 }
 END_TEST
@@ -59,7 +50,6 @@ START_TEST(test_random_tile_is_generated) {
     free(game);
 }
 END_TEST
-
 
 START_TEST(test_combine1) {
     unsigned int arr[4] = {2, 2, 0, 0};
@@ -159,8 +149,8 @@ START_TEST(test_move_array3) {
 END_TEST
 
 START_TEST(test_get_free_tiles) {
-    unsigned int arr[16] = { 0 };
-    int fr[16] = { 0 };
+    unsigned int arr[16] = {0};
+    int fr[16] = {0};
     create_tile(arr, 0, 0, 2);
     create_tile(arr, 2, 3, 2);
     get_free_tiles(arr, fr);
@@ -170,160 +160,112 @@ START_TEST(test_get_free_tiles) {
 END_TEST
 
 START_TEST(test_can_move_left1) {
-    unsigned int arr[16] = {0, 0, 0, 0,
-                            2, 0, 0, 0,
-                            2, 0, 0, 0,
-                            0, 0, 0, 0};
-                            
+    unsigned int arr[16] = {0, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0};
+
     ck_assert_int_eq(can_move(arr, LEFT), 0);
 }
 END_TEST
 
 START_TEST(test_can_move_left2) {
-    unsigned int arr[16] = {0, 0, 0, 0,
-                            0, 0, 2, 0,
-                            0, 0, 2, 0,
-                            0, 0, 0, 0};
-                            
+    unsigned int arr[16] = {0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 0, 0};
+
     ck_assert_int_eq(can_move(arr, LEFT), 1);
 }
 END_TEST
 
 START_TEST(test_can_move_left3) {
-    unsigned int arr[16] = {0, 0, 0, 0,
-                            0, 0, 2, 2,
-                            0, 0, 0, 0,
-                            0, 0, 0, 0};
-                            
+    unsigned int arr[16] = {0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0};
+
     ck_assert_int_eq(can_move(arr, LEFT), 1);
 }
 END_TEST
 
 START_TEST(test_can_move_left4) {
-    unsigned int arr[16] = {0, 0, 0, 0,
-                            2, 4, 0, 0,
-                            0, 0, 0, 0,
-                            0, 0, 0, 0};
-                            
+    unsigned int arr[16] = {0, 0, 0, 0, 2, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
     ck_assert_int_eq(can_move(arr, LEFT), 0);
 }
 END_TEST
 
 START_TEST(test_can_move_right1) {
-    unsigned int arr[16] = {0, 0, 0, 0,
-                            0, 0, 0, 2,
-                            0, 0, 0, 2,
-                            0, 0, 0, 0};
-                            
+    unsigned int arr[16] = {0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 0};
+
     ck_assert_int_eq(can_move(arr, RIGHT), 0);
 }
 END_TEST
 
 START_TEST(test_can_move_right2) {
-    unsigned int arr[16] = {0, 0, 0, 0,
-                            2, 0, 0, 0,
-                            2, 0, 0, 0,
-                            0, 0, 0, 0};
-                            
+    unsigned int arr[16] = {0, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0};
+
     ck_assert_int_eq(can_move(arr, RIGHT), 1);
 }
 END_TEST
 
 START_TEST(test_can_move_right3) {
-    unsigned int arr[16] = {0, 0, 0, 0,
-                            0, 0, 2, 2,
-                            0, 0, 0, 0,
-                            0, 0, 0, 0};
-                            
+    unsigned int arr[16] = {0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0};
+
     ck_assert_int_eq(can_move(arr, RIGHT), 1);
 }
 END_TEST
 
 START_TEST(test_can_move_right4) {
-    unsigned int arr[16] = {0, 0, 0, 0,
-                            0, 0, 2, 4,
-                            0, 0, 0, 0,
-                            0, 0, 0, 0};
-                            
+    unsigned int arr[16] = {0, 0, 0, 0, 0, 0, 2, 4, 0, 0, 0, 0, 0, 0, 0, 0};
+
     ck_assert_int_eq(can_move(arr, RIGHT), 0);
 }
 END_TEST
 
 START_TEST(test_can_move_up1) {
-    unsigned int arr[16] = {2, 0, 0, 0,
-                            2, 0, 0, 0,
-                            0, 0, 0, 0,
-                            0, 0, 0, 0};
-                            
+    unsigned int arr[16] = {2, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
     ck_assert_int_eq(can_move(arr, UP), 1);
 }
 END_TEST
 
 START_TEST(test_can_move_up2) {
-    unsigned int arr[16] = {2, 0, 0, 0,
-                            4, 0, 0, 0,
-                            0, 0, 0, 0,
-                            0, 0, 0, 0};
-                            
+    unsigned int arr[16] = {2, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
     ck_assert_int_eq(can_move(arr, UP), 0);
 }
 END_TEST
 
 START_TEST(test_can_move_up3) {
-    unsigned int arr[16] = {0, 0, 2, 2,
-                            0, 0, 0, 0,
-                            0, 0, 0, 0,
-                            0, 0, 0, 0};
-                            
+    unsigned int arr[16] = {0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
     ck_assert_int_eq(can_move(arr, UP), 0);
 }
 END_TEST
 
 START_TEST(test_can_move_up4) {
-    unsigned int arr[16] = {0, 0, 0, 0,
-                            0, 0, 2, 4,
-                            0, 0, 0, 0,
-                            0, 0, 0, 0};
-                            
+    unsigned int arr[16] = {0, 0, 0, 0, 0, 0, 2, 4, 0, 0, 0, 0, 0, 0, 0, 0};
+
     ck_assert_int_eq(can_move(arr, UP), 1);
 }
 END_TEST
 
 START_TEST(test_can_move_down1) {
-    unsigned int arr[16] = {2, 0, 0, 0,
-                            2, 0, 0, 0,
-                            0, 0, 0, 0,
-                            0, 0, 0, 0};
+    unsigned int arr[16] = {2, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
     ck_assert_int_eq(can_move(arr, DOWN), 1);
 }
 END_TEST
 
 START_TEST(test_can_move_down2) {
-    unsigned int arr[16] = {0, 0, 0, 0,
-                            0, 0, 0, 0,
-                            2, 0, 0, 0,
-                            4, 0, 0, 0};
+    unsigned int arr[16] = {0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 4, 0, 0, 0};
 
     ck_assert_int_eq(can_move(arr, DOWN), 0);
 }
 END_TEST
 
 START_TEST(test_can_move_down3) {
-    unsigned int arr[16] = {0, 2, 2, 0,
-                            0, 0, 0, 0,
-                            0, 0, 0, 0,
-                            0, 0, 0, 0};
+    unsigned int arr[16] = {0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
     ck_assert_int_eq(can_move(arr, DOWN), 1);
 }
 END_TEST
 
 START_TEST(test_can_move_down4) {
-    unsigned int arr[16] = {0, 0, 0, 0,
-                            0, 0, 0, 0,
-                            0, 0, 0, 0,
-                            0, 0, 2, 4};
+    unsigned int arr[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 4};
 
     ck_assert_int_eq(can_move(arr, DOWN), 0);
 }

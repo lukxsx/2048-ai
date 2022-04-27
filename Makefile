@@ -21,7 +21,7 @@ check:
 	@./unittest
 
 mmaxtest:
-	$(CC) -O0 -o mmax tests/mmax_tests.c $(filter-out src/main.c, $(wildcard src/*.c))
+	$(CC) -Wall -Werror -o mmax tests/mmax_tests.c $(filter-out src/main.c, $(wildcard src/*.c))
 	@./mmax
 
 debug:

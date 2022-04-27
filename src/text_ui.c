@@ -42,34 +42,75 @@ void error_exit(char *msg) {
 The following are helper functions to print different parts of the game board
 ================================================================================
 */
-void print_top(int x_size) {
+void print_top() {
     printf("╔═══════");
-    for (int i = 0; i < x_size - 1; i++) {
+    for (int i = 0; i < 3; i++) {
         printf("╦═══════");
     }
     printf("╗\n");
 }
 
-void print_middle_walls(int x_size) {
+void print_top2() {
+    printf("╔═══════");
+    for (int i = 0; i < 3; i++) {
+        printf("╦═══════");
+    }
+    printf("╗       ");
+    printf("╔═══════");
+    for (int i = 0; i < 3; i++) {
+        printf("╦═══════");
+    }
+    printf("╗\n");
+}
+
+void print_middle_walls() {
     printf("║       ");
-    for (int i = 0; i < x_size - 1; i++) {
+    for (int i = 0; i < 3; i++) {
         printf("║       ");
     }
     printf("║\n");
 }
 
-void print_row_lines(int x_size) {
+void print_middle_walls2() {
+    printf("║       ");
+    for (int i = 0; i < 3; i++) {
+        printf("║       ");
+    }
+    printf("║       ");
+
+    printf("║       ");
+    for (int i = 0; i < 3; i++) {
+        printf("║       ");
+    }
+    printf("║\n");
+}
+
+void print_row_lines() {
     printf("╠═══════");
-    for (int i = 0; i < x_size - 1; i++) {
+    for (int i = 0; i < 3; i++) {
+        printf("╬═══════");
+    }
+    printf("╣\n");
+}
+
+void print_row_lines2() {
+    printf("╠═══════");
+    for (int i = 0; i < 3; i++) {
+        printf("╬═══════");
+    }
+    printf("╣       ");
+
+    printf("╠═══════");
+    for (int i = 0; i < 3; i++) {
         printf("╬═══════");
     }
     printf("╣\n");
 }
 
 void print_only_array(unsigned int *arr) {
-    print_top(4);
+    print_top();
     for (int j = 0; j < 4; j++) {
-        print_middle_walls(4);
+        print_middle_walls();
         for (int i = 0; i < 4; i++) {
             int num = arr[idx(j, i)];
             if (num == 0) {
@@ -86,11 +127,68 @@ void print_only_array(unsigned int *arr) {
         }
         printf("║\n");
 
-        print_middle_walls(4);
+        print_middle_walls();
         if (j < 4 - 1) {
-            print_row_lines(4);
+            print_row_lines();
         }
     }
+    printf("╚═══════");
+    for (int i = 0; i < 3; i++) {
+        printf("╩═══════");
+    }
+    printf("╝\n");
+}
+
+void print_two_arrays(unsigned int *a, unsigned int *b) {
+    print_top2();
+    for (int j = 0; j < 4; j++) {
+        print_middle_walls2();
+        for (int i = 0; i < 4; i++) {
+            int num = a[idx(j, i)];
+            if (num == 0) {
+                printf("║       ");
+            } else if (num >= 1000) {
+                printf("║ %d  ", num);
+            } else if (num >= 100 && num < 1000) {
+                printf("║  %d  ", num);
+            } else if (num >= 10 && num < 100) {
+                printf("║   %d  ", num);
+            } else {
+                printf("║   %d   ", num);
+            }
+        }
+        if (j != 1) {
+            printf("║       ");
+        } else {
+            printf("║  -->  ");
+        }
+
+        for (int i = 0; i < 4; i++) {
+            int num = b[idx(j, i)];
+            if (num == 0) {
+                printf("║       ");
+            } else if (num >= 1000) {
+                printf("║ %d  ", num);
+            } else if (num >= 100 && num < 1000) {
+                printf("║  %d  ", num);
+            } else if (num >= 10 && num < 100) {
+                printf("║   %d  ", num);
+            } else {
+                printf("║   %d   ", num);
+            }
+        }
+        printf("║\n");
+
+        print_middle_walls2();
+        if (j < 4 - 1) {
+            print_row_lines2();
+        }
+    }
+    printf("╚═══════");
+    for (int i = 0; i < 3; i++) {
+        printf("╩═══════");
+    }
+    printf("╝       ");
     printf("╚═══════");
     for (int i = 0; i < 3; i++) {
         printf("╩═══════");

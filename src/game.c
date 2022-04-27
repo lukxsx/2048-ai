@@ -90,7 +90,7 @@ void create_tile_index(unsigned int *arr, int index, int value) {
 Creates a new tile in random (empty) coordinates
 ================================================================================
 */
-void create_random_tile(game_state_t *game) {
+void create_random_tile(unsigned int *arr) {
     // Create 2 with probability of 75%, 4 with probability of 25%
     int prob = (rand() & 1) | (rand() & 1);
     int value = prob ? 2 : 4;
@@ -100,12 +100,12 @@ void create_random_tile(game_state_t *game) {
     for (;;) {
         ry = rand() % 4;
         rx = rand() % 4;
-        if (is_tile_empty(game->game_array, ry, rx)) {
+        if (is_tile_empty(arr, ry, rx)) {
             break;
         }
     }
 
-    create_tile(game->game_array, ry, rx, value);
+    create_tile(arr, ry, rx, value);
 }
 
 /*
@@ -352,7 +352,7 @@ int move_game(game_state_t *game, direction dir) {
     if (can_move(game->game_array, dir)) {
         game->score += move(game->game_array, dir);
         game->moves++;
-        create_random_tile(game);
+        create_random_tile(game->game_array);
         return 1;
     }
     return 0;

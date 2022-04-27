@@ -1,4 +1,4 @@
-#define _GNU_SOURCE
+#define _DEFAULT_SOURCE
 
 #include <limits.h>
 #include <stdio.h>
@@ -205,7 +205,7 @@ move_t minimize(unsigned int *arr, int a, int b, int depth) {
 
         /* replace the current score if the returned score is worse
            we don't set the direction here because it's only needed by the
-           maximizer function */
+           maximizer function  */
         if (max.score < this.score) {
             this.score = max.score;
         }
@@ -219,6 +219,20 @@ move_t minimize(unsigned int *arr, int a, int b, int depth) {
             b = this.score;
         }
     }
+
+    /*
+    memcpy(temp, arr, 16 * sizeof(unsigned int));
+    create_random_tile(temp);
+    move_t max = maximize(temp, a, b, depth);
+    if (max.score < this.score) {
+            this.score = max.score;
+    }
+
+
+    if (this.score < b) {
+            b = this.score;
+    }
+    */
 
     free(mm_list); // free the minimize move list
     return this;
@@ -249,8 +263,8 @@ unsigned int ai_play(int delay, int print) {
 
     // create a new game and two initial tiles
     game_state_t *ai_game = new_game();
-    create_random_tile(ai_game);
-    create_random_tile(ai_game);
+    create_random_tile(ai_game->game_array);
+    create_random_tile(ai_game->game_array);
 
     if (print) {
         print_array(ai_game); // don't print the game array if quiet mode

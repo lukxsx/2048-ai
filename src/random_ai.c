@@ -112,8 +112,8 @@ int random_ai_play(int delay, int ai, int print) {
 
     game_state_t *bgame = new_game();
 
-    create_random_tile(bgame);
-    create_random_tile(bgame);
+    create_random_tile(bgame->game_array);
+    create_random_tile(bgame->game_array);
     if (print)
         print_array(bgame);
 

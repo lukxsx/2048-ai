@@ -30,8 +30,8 @@ void play() {
     game_state_t *game = new_game();
 
     // Create two initial tiles
-    create_random_tile(game);
-    create_random_tile(game);
+    create_random_tile(game->game_array);
+    create_random_tile(game->game_array);
     print_array(game);
 
     // Main game loop

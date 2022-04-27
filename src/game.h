@@ -61,7 +61,7 @@ void create_tile_index(unsigned int *arr, int index, int value);
 Creates a new tile in random empty coordinates
 ================================================================================
 */
-void create_random_tile(game_state_t *game);
+void create_random_tile(unsigned int *arr);
 
 /*
 ================================================================================
