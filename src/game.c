@@ -25,6 +25,7 @@ game_state_t *new_game() {
     // initialize score and moves counter
     game->score = 0;
     game->moves = 0;
+    game->best_tile = 0;
     return game;
 }
 
@@ -83,6 +84,21 @@ Creates a new tile in index
 */
 void create_tile_index(unsigned int *arr, int index, int value) {
     arr[index] = value;
+}
+
+/*
+================================================================================
+Returns the highest tile of the array
+================================================================================
+*/
+unsigned int get_best_tile(unsigned int *arr) {
+    unsigned int best = 0;
+    for (int i = 0; i < 16; i++) {
+        if (arr[i] > best) {
+            best = arr[i];
+        }
+    }
+    return best;
 }
 
 /*
@@ -353,6 +369,7 @@ int move_game(game_state_t *game, direction dir) {
         game->score += move(game->game_array, dir);
         game->moves++;
         create_random_tile(game->game_array);
+        game->best_tile = get_best_tile(game->game_array);
         return 1;
     }
     return 0;

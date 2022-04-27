@@ -10,6 +10,7 @@ typedef struct {
     unsigned int game_array[16];
     unsigned int score;
     unsigned int moves;
+    unsigned int best_tile;
 } game_state_t;
 
 /*

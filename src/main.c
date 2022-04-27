@@ -11,6 +11,12 @@
 #include "random_ai.h"
 #include "text_ui.h"
 
+/*
+================================================================================
+Runs comparasion on the three algorithms: random input, randomized AI and
+minimax AI
+================================================================================
+*/
 void compare(int n) {
     int *rand_scores = calloc(n, sizeof(int));
     int *simp_scores = calloc(n, sizeof(int));

@@ -48,7 +48,7 @@ The program supports few command line options. If no options are given, the game
 -s            Use randomizer AI
 -r            Play the game with randomized input
 -t [value]    Delay in milliseconds
--c            Run in comparison mode
+-c [runs]     Run in comparison mode
 -h            Show this information
 ```
 ### Gameplay

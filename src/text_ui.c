@@ -202,6 +202,7 @@ This prints the game board
 ================================================================================
 */
 void print_array(game_state_t *game) {
-    printf("SCORE: %d   MOVES: %d\n", game->score, game->moves);
+    printf("SCORE: %d   MOVES: %d   BEST: %d\n", game->score, game->moves,
+           game->best_tile);
     print_only_array(game->game_array);
 }
