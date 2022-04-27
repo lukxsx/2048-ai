@@ -39,19 +39,7 @@ moves.
 When a new game is started (gamemode doesn't matter), the function
 ```new_game()``` is used. It will allocate a new ```game_state_t``` struct
 and initialize it's values. It calls ```init_game_array()``` which allocates
-and returns a new game board (2-dimensional array, stored in memory as an array
-of int pointers (columns) each pointing to the corresponding row.
-
-#### Ending game
-The game is stopped with ```end_game(game_state_t *game)``` which frees the
-two-dimensional array (free cannot be used on it as is, because it would only
-free the columns array pointer and leave row arrays in place) ̣
-
-#### Copying games
-The functions ```copy_game(game_state_t *old)``` and
-```copy_game_array(int **old)``` are used by randomizer AI and minimax AI to
-make copies of the current game for simulation purposes. They will allocate and
-initialize new games and copy the contents of the old games to them.
+and returns a new game board (array of 16 unsigned integers).
 
 ### Tiles
 #### Creating tiles
@@ -60,19 +48,19 @@ New tiles to the game board can be created with
 randomized (free) coordinates. The tile will be 2 with 75% probability and 4
 with 25% probability.
 
-```create_tile(int **arr, int x, int y, int value)``` is used to generate a tile
+```create_tile(int *arr, int y, int x, int value)``` is used to generate a tile
 to a speficic spot. Create_random_tile uses it internally but it is also used by
 the minimax AI for simulation.
 
 #### Moving tiles
 The tiles on the game board are moved with the ```move_game(game_state_t)```
-function which calls the internal ```move(int **game_array)``` function.
+function which calls the internal ```move(int *game_array)``` function.
 
 All internal moving functions work on 1-dimensional arrays. The game board is
 processed as single rows and columns by the processing functions.
 
 Moving process has three parts: 1) check if we can move to the direction using
-```can_move(int **arr, direction dir)``` 2) move all tiles of each row or column
+```can_move(int *arr, direction dir)``` 2) move all tiles of each row or column
 to the left side of the array using ```move_all_left(int *arr)``` 3) run the
 ```combine(int *arr)``` on all subarrays (it will combine the matching tiles
 and returns the score increase). 4) Move all left again, because otherwise the
