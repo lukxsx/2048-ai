@@ -5,8 +5,6 @@
 #include "../src/game.h"
 #include "../src/text_ui.h"
 
-const int ARR_PADDING = 0;
-
 // Check that the new game_state_t is successfully created
 // and the game_array is allocated inside it too
 START_TEST(test_new_game_is_created) {

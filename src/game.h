@@ -17,7 +17,7 @@ typedef struct {
 Enum for all 4 directions and to map them to ints
 ================================================================================
 */
-typedef enum { LEFT = 0, RIGHT = 1, UP = 2, DOWN = 3 } direction;
+typedef enum { LEFT = 0, RIGHT = 1, UP = 2, DOWN = 3, NONE = 4 } direction;
 
 /*
 ================================================================================

@@ -5,8 +5,6 @@
 #include "../src/ai.h"
 #include "../src/text_ui.h"
 
-const int ARR_PADDING = 1;
-
 int arr_equal(unsigned int *a, unsigned int *b) {
     for (int i = 0; i < 16; i++) {
         if (a[i] != b[i]) return 0;

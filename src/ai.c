@@ -12,8 +12,13 @@
 #include "ai.h"
 #include "text_ui.h"
 
+const int MMAX_CHOOSE_RANDOM = 0; // random selection for minimax moves
+const int MMAX_DEPTH = 5;         // maximum depth for the minimax algo
+
 move_t maximize(unsigned int *arr, int a, int b, int depth);
 move_t minimize(unsigned int *arr, int a, int b, int depth);
+
+int move_counter[4]; // every move that the AI makes is stored here
 
 /*
 ================================================================================
@@ -110,6 +115,7 @@ move_t maximize(unsigned int *arr, int a, int b, int depth) {
     depth--; // reduce depth by one
 
     unsigned int temp[16]; // temp array for trying different moves
+    int scores[4] = {0};   // the scores of every move are stored here
 
     // go over all available moves for max and run minimize on them
     for (int i = 0; i < 4; i++) {
@@ -121,9 +127,11 @@ move_t maximize(unsigned int *arr, int a, int b, int depth) {
             move(temp, (direction)i);                 // try moving
             move_t min = minimize(temp, a, b, depth); // call minimize
 
+            scores[i] = min.score; // add score to the scores array
+
             if (min.score > this.score) {
-                // replace the current direction and score if the returned
-                // values are better
+                /* replace the current direction and score if the returned
+                   values are better */
                 this.dir = (direction)i;
                 this.score = min.score;
             }
@@ -137,6 +145,21 @@ move_t maximize(unsigned int *arr, int a, int b, int depth) {
                 a = this.score;
             }
         }
+    }
+
+    /* if this option is selected, the direction is chosen randomly if there
+       are multiple moves with the same score */
+    if (MMAX_CHOOSE_RANDOM) {
+        int top_dir_idx = 0;
+        direction top_dirs[4] = {4, 4, 4, 4};
+        for (int i = 0; i < 4; i++) {
+            if (scores[i] == this.score) {
+                top_dirs[top_dir_idx] = (direction)i;
+                top_dir_idx++;
+            }
+        }
+
+        this.dir = top_dirs[rand() % top_dir_idx];
     }
 
     return this;
@@ -180,9 +203,9 @@ move_t minimize(unsigned int *arr, int a, int b, int depth) {
         create_tile_index(temp, mm.index, mm.tile);
         move_t max = maximize(temp, a, b, depth);
 
-        // replace the current score if the returned score is worse
-        // we don't set the direction here because it's only needed by the
-        // maximizer function
+        /* replace the current score if the returned score is worse
+           we don't set the direction here because it's only needed by the
+           maximizer function */
         if (max.score < this.score) {
             this.score = max.score;
         }
@@ -201,14 +224,24 @@ move_t minimize(unsigned int *arr, int a, int b, int depth) {
     return this;
 }
 
+/*
+================================================================================
+Determine the best move using minimax algo and return the move
+================================================================================
+*/
 direction get_best_move(unsigned int *arr) {
     // get the best move with the minimnax algo
-    move_t best_move = maximize(arr, -1, INT_MAX, 5);
+    move_t best_move = maximize(arr, -1, INT_MAX, MMAX_DEPTH);
+
+    move_counter[(int)best_move.dir]++; // update the move counter
+
     return best_move.dir;
 }
 
 unsigned int ai_play(int delay, int print) {
+    memset(move_counter, 0, 4 * sizeof(int)); // zero the move_counter array
     unsigned int score = 0;
+
     // set random seed
     struct timespec t;
     timespec_get(&t, TIME_UTC);
@@ -223,11 +256,11 @@ unsigned int ai_play(int delay, int print) {
         print_array(ai_game); // don't print the game array if quiet mode
     }
 
-    // AI game loop
+    // game loop
     while (!is_terminal(ai_game->game_array, 0)) {
-        
 
-        move_game(ai_game, get_best_move(ai_game->game_array)); // move the array
+        move_game(ai_game,
+                  get_best_move(ai_game->game_array)); // move the array
         if (print) {
             print_array(ai_game); // print array if not in quiet mode
         }
