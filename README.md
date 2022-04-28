@@ -14,6 +14,7 @@ automatically using the minimax algorithm.
 - [Week 3 report](doc/week3_report.md)
 - [Week 4 report](doc/week4_report.md)
 - [Week 5 report](doc/week5_report.md)
+- [Week 6 report](doc/week6_report.md)
 
 ## Building
 ### Prerequisites
@@ -28,9 +29,13 @@ make
 Now the program can be run with ```./2048```.
 
 ### Tests
-The tests can be run with
+The unit tests can be run with
 ```
 make check
+```
+Tests for the minimax algorithm can be run with
+```
+make mmaxtest
 ```
 
 ### Code auto formatting
