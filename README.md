@@ -20,17 +20,22 @@ automatically using the minimax algorithm.
 ## Building
 ### Prerequisites
 You need a C compiler (GCC for example), Make and Check. (Some university's computer should have these already installed, at least on melkki).
-For example, in Arch Linux, ```pacman -S base-devel check``` and in Ubuntu/Debian based distros ```apt install build-essential check```.
 
-**Optional**: In order to generate a HTML coverage report, ```gcovr``` is needed. Otherwise you can use Codecov
-(link at the top of the page).
+Optionally if you want to generate HTML coverage report, ```gcovr``` must be installed. Otherwise you can use Codecov (link at the top of the page).
+
+#### Arch Linux
+```pacman -S base-devel check```
+
+#### Debian/Ubuntu
+```apt install build-essential check```
+
 
 ### Compiling
 Run the command
 ```
 make
 ```
-Now the program can be run with ```./2048```.
+The program can be run with ```./2048```.
 
 ### Tests
 The unit tests can be run with
@@ -55,16 +60,22 @@ Note that ```gcovr``` must be installed
 make coverage-html
 ```
 
+The generated file is called ```coverage.html```.
+
 ## Usage
 ### Configuration
-The program supports few command line options. If no options are given, the game will start in "normal" mode (the player controls the game)
+The program supports few command line options. If no options are given, the game will start in player mode (you control the game).
 ```
 -a            Play with minimax AI
--s            Use randomizer AI
--r            Play the game with randomized input
+-s            Play with randomizer AI
+-r            Play with randomized input
 -t [value]    Delay in milliseconds
 -c [runs]     Run in comparison mode
 -h            Show this information
 ```
-### Gameplay
-The game can be played with ```W, A, S and D``` keys.
+
+The ```ai.c``` file contains a few setting variables that can be changed before
+compiling. These affect the operation of the minimax algorithm.
+
+### Gameplay in player mode
+The game can be played with ```W, A, S and D``` keys. Arrow keys are not currently supported.

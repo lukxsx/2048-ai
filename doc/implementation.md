@@ -7,7 +7,7 @@ to play it automatically.
 generated on the board (one at every
 move) and when they collide, they will combine and the number on the tile is
 doubled. The numbers start from 2 and 4 and every new tile added will be either
-2 or 4. The game can be considered "completed" when tile 2048 is reached.
+2 or 4. The game can be considered completed when tile 2048 is reached.
 However the game can be continued as long as possible achieving even higher
 numbers.
 
@@ -31,20 +31,19 @@ game.
 ## How the game code works
 ### Game state struct
 The most used piece of code in this application is probably the struct typedef
-called ```game_state_t```. It contains the game board, score and the amount of
-moves.
+called ```game_state_t```. It contains the game board (array of 16x unsigned
+integers), score, amount of moves and the value of the highest tile.
 
 ### Game management
 #### New game
 When a new game is started (gamemode doesn't matter), the function
 ```new_game()``` is used. It will allocate a new ```game_state_t``` struct
-and initialize it's values. It calls ```init_game_array()``` which allocates
-and returns a new game board (array of 16 unsigned integers).
+and initialize it's values to zero.
 
 ### Tiles
 #### Creating tiles
 New tiles to the game board can be created with
-```create_random_tile(game_state_t *game)```. It adds a 2 or 4 to the board to a
+```create_random_tile(unsigned int *arr)```. It adds a 2 or 4 to the board to a
 randomized (free) coordinates. The tile will be 2 with 75% probability and 4
 with 25% probability.
 
@@ -54,7 +53,7 @@ the minimax AI for simulation.
 
 #### Moving tiles
 The tiles on the game board are moved with the ```move_game(game_state_t)```
-function which calls the internal ```move(int *game_array)``` function.
+function which calls the internal ```move(int *arr)``` function.
 
 All internal moving functions work on 1-dimensional arrays. The game board is
 processed as single rows and columns by the processing functions.
@@ -87,10 +86,9 @@ My maximizer and minimizer uses the ```rate(int **arr)``` function to return
 a score of each game state. The score will be high if there are few large-value
 tiles and low if there are many low-value tiles.
 
-Maximizer function generates a list of possible moves that the player can take
-in the current game state. It will go through all the possible moves and run
-minimizer on them. It checks the ratings returned by minimizer and
-compares them to the current rating.
+Maximizer function goes through all the possible moves that the player can take
+and runs the minimizer function on them. It checks the ratings returned by
+minimizer and compares them to the current rating.
 
 Minimizer works similarly, but goes through all possible spots where the
 computer can put a random 2 or 4 tile. It tries to keep the rating as low as
@@ -126,7 +124,8 @@ Functions and structs of the minimax AI
 
 ## Important structs and enums
 ### game_state_t
-Contains the state of the current game (game board, score, amount of moves)
+Contains the state of the current game (game board, score, amount of moves,
+highest tile)
 
 ### direction
 Enum that maps the directions LEFT, RIGHT, UP and DOWN to ints.
@@ -143,11 +142,43 @@ returning the all possible moves the min can make in minimax algorithm.
 My application includes a comparasion mode that runs all of the game modes n
 times and shows the differences between average, maximum and minimum scores.
 
+Clearly, the minimax algorithm performs best of all different options:
+
+```
+   Test results (100 runs)
+
+Mode    Avg      Min      Max
+──────────────────────────────
+rand    618      108      1568
+simp    1977     256      5448
+mmax    8492     2824     22700
+
+rand = completely randomized input
+simp = simple randomized AI
+mmax = minimax algorithm
+```
+
+As we can see, minimax gives over 1274% better results compared to the random
+input and 330% better results compared to the randomizer AI.
+
+
 ## Results
-tba
+The algorithm can reach the number 2048 sometimes, but most of the time it
+reaches 1024. The game can be considered to be completed when 2048 is
+reached, so basically my program can solve the game (although not every time).
+The course of the game depends very much on randomness.
 
 ## What could be improved
-tba
+The algorithm is still not as good as the best 2048 solvers I have seen. It
+reaches the number 1024 most of the time, but rarely 2048. I have never seen it
+reach higher value than 2048. 
+
+In order to achieve better results, some kind of intelligent heuristic analysis
+should be implemented. After all, minimax does not contain any "intelligence"
+and the randomness of the game makes it difficult to achieve very high results.
+
+Still, it plays better than me most of the time, so I think I can call this a
+successful project.
 
 ## Sources
 - [https://en.wikipedia.org/wiki/Minimax](https://en.wikipedia.org/wiki/Minimax)
