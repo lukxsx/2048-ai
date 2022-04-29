@@ -125,4 +125,11 @@ Writes a list of free tiles to ret pointer
 */
 void get_free_tiles(unsigned int *arr, int *ret);
 
+/*
+================================================================================
+Returns the highest tile of the array
+================================================================================
+*/
+unsigned int get_best_tile(unsigned int *arr);
+
 #endif

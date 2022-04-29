@@ -302,7 +302,7 @@ int can_move(unsigned int *arr, direction dir) {
         return can_move_up(arr);
     if (dir == DOWN)
         return can_move_down(arr);
-    return 0;
+    return 0; // this can be never reached
 }
 
 /*

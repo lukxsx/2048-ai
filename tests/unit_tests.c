@@ -5,6 +5,8 @@
 #include "../src/game.h"
 #include "../src/text_ui.h"
 
+// clang-format off
+
 // Check that the new game_state_t is successfully created
 // and the game_array is allocated inside it too
 START_TEST(test_new_game_is_created) {
@@ -45,7 +47,7 @@ END_TEST
 // somewhere
 START_TEST(test_random_tile_is_generated) {
     game_state_t *game = new_game();
-    create_random_tile(game);
+    create_random_tile(game->game_array);
     ck_assert_int_eq(is_array_full(game->game_array), 0);
     free(game);
 }
@@ -271,6 +273,146 @@ START_TEST(test_can_move_down4) {
 }
 END_TEST
 
+START_TEST(test_cannot_move_none) {
+    unsigned int arr[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+    ck_assert_int_eq(can_move(arr, NONE), 0);
+}
+END_TEST
+
+START_TEST(test_create_tile_idx) {
+    unsigned int arr[16] = {0, 0, 0, 0,
+                            0, 0, 0, 0,
+                            0, 0, 0, 0,
+                            0, 0, 0, 0};
+    
+    create_tile_index(arr, 2, 4);
+    create_tile_index(arr, 6, 8);
+
+    ck_assert_int_eq(arr[2], 4);
+    ck_assert_int_eq(arr[6], 8);
+}
+END_TEST
+
+START_TEST(test_get_best_tile) {
+    unsigned int arr[16] = {2, 4, 32, 4,
+                            8, 16, 64, 32,
+                            64, 128, 8, 64,
+                            16, 0, 2, 8};
+    
+    ck_assert_int_eq(get_best_tile(arr), 128);
+}
+END_TEST
+
+// move tests
+
+START_TEST(test_move_arr_left1) {
+    unsigned int arr[16] = {2, 2, 0, 0,
+                            4, 4, 4, 4,
+                            2, 4, 0, 0,
+                            8, 0, 0, 8 };
+    
+    move(arr, LEFT);
+    
+    ck_assert_int_eq(arr[0], 4);
+    ck_assert_int_eq(arr[1], 0);
+    ck_assert_int_eq(arr[4], 8);
+    ck_assert_int_eq(arr[5], 8);
+    ck_assert_int_eq(arr[6], 0);
+    ck_assert_int_eq(arr[8], 2);
+    ck_assert_int_eq(arr[9], 4);
+    ck_assert_int_eq(arr[12], 16);
+    ck_assert_int_eq(arr[13], 0);
+}
+END_TEST
+
+START_TEST(test_move_arr_right1) {
+    unsigned int arr[16] = {2, 2, 0, 0,
+                            4, 4, 4, 4,
+                            2, 4, 0, 0,
+                            8, 0, 0, 8 };
+    
+    move(arr, RIGHT);
+    
+    ck_assert_int_eq(arr[0], 0);
+    ck_assert_int_eq(arr[1], 0);
+    ck_assert_int_eq(arr[3], 4);
+    ck_assert_int_eq(arr[4], 0);
+    ck_assert_int_eq(arr[5], 0);
+    ck_assert_int_eq(arr[6], 8);
+    ck_assert_int_eq(arr[7], 8);
+    ck_assert_int_eq(arr[12], 0);
+    ck_assert_int_eq(arr[15], 16);
+}
+END_TEST
+
+START_TEST(test_move_arr_up1) {
+    unsigned int arr[16] = {8, 16, 0, 0,
+                            8, 8,  0, 0,
+                            8, 4,  2, 0,
+                            8, 4,  2, 0 };
+    
+    move(arr, UP);
+    
+    ck_assert_int_eq(arr[0], 16);
+    ck_assert_int_eq(arr[4], 16);
+    ck_assert_int_eq(arr[8], 0);
+    ck_assert_int_eq(arr[1], 16);
+    ck_assert_int_eq(arr[9], 8);
+    ck_assert_int_eq(arr[2], 4);
+
+}
+END_TEST
+
+START_TEST(test_move_arr_down1) {
+    unsigned int arr[16] = {8, 16, 0, 0,
+                            8, 8,  0, 0,
+                            8, 4,  2, 0,
+                            8, 4,  2, 0 };
+    
+    move(arr, DOWN);
+    
+    ck_assert_int_eq(arr[0], 0);
+    ck_assert_int_eq(arr[4], 0);
+    ck_assert_int_eq(arr[8], 16);
+    ck_assert_int_eq(arr[12], 16);
+    ck_assert_int_eq(arr[13], 8);
+    ck_assert_int_eq(arr[14], 4);
+    ck_assert_int_eq(arr[15], 0);
+
+}
+END_TEST
+
+START_TEST(test_move_game1) {
+    game_state_t *g = new_game();
+    unsigned int arr[16] = {0, 2, 2, 0,
+                            4, 2, 4, 0,
+                            8, 8, 2, 2,
+                            2, 0, 2, 0 };
+    memcpy(g->game_array, arr, 16 * sizeof(unsigned int));
+    
+    move_game(g, RIGHT);
+    
+    ck_assert_int_eq(g->game_array[3], 4);
+    ck_assert_int_eq(g->game_array[7], 4);
+    ck_assert_int_eq(g->game_array[11], 4);
+    ck_assert_int_eq(g->game_array[10], 16);
+    ck_assert_int_eq(g->game_array[15], 4);
+
+}
+END_TEST
+
+START_TEST(test_move_game2) {
+    game_state_t *g = new_game();
+    unsigned int arr[16] = {0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 4, 0, 0, 0};
+    memcpy(g->game_array, arr, 16 * sizeof(unsigned int));
+    
+    ck_assert_int_eq(move_game(g, DOWN), 0);
+}
+END_TEST
+
+// clang-format on
+
 /* Test running code */
 
 Suite *array_create_suite(void) {
@@ -293,6 +435,7 @@ Suite *array_modify_suite(void) {
     tcase_add_test(tc_core, test_array_full);
     tcase_add_test(tc_core, test_array_not_full);
     tcase_add_test(tc_core, test_random_tile_is_generated);
+    tcase_add_test(tc_core, test_create_tile_idx);
     tcase_add_test(tc_core, test_combine1);
     tcase_add_test(tc_core, test_combine2);
     tcase_add_test(tc_core, test_move_left1);
@@ -303,6 +446,7 @@ Suite *array_modify_suite(void) {
     tcase_add_test(tc_core, test_move_array2);
     tcase_add_test(tc_core, test_move_array3);
     tcase_add_test(tc_core, test_get_free_tiles);
+    tcase_add_test(tc_core, test_get_best_tile);
     suite_add_tcase(s, tc_core);
     return s;
 }
@@ -332,6 +476,25 @@ Suite *array_canmove_suite(void) {
     tcase_add_test(tc_core, test_can_move_down2);
     tcase_add_test(tc_core, test_can_move_down3);
     tcase_add_test(tc_core, test_can_move_down4);
+
+    tcase_add_test(tc_core, test_cannot_move_none);
+    suite_add_tcase(s, tc_core);
+    return s;
+}
+
+Suite *array_move_suite(void) {
+    Suite *s;
+    TCase *tc_core;
+    s = suite_create("array move checking");
+    tc_core = tcase_create("array move checking");
+
+    tcase_add_test(tc_core, test_move_arr_left1);
+    tcase_add_test(tc_core, test_move_arr_right1);
+    tcase_add_test(tc_core, test_move_arr_up1);
+    tcase_add_test(tc_core, test_move_arr_down1);
+    tcase_add_test(tc_core, test_move_game1);
+    tcase_add_test(tc_core, test_move_game2);
+
     suite_add_tcase(s, tc_core);
     return s;
 }
@@ -341,13 +504,16 @@ int main() {
     Suite *s_arr;
     Suite *s_mod;
     Suite *s_canmove;
+    Suite *s_move;
     SRunner *sr;
     s_arr = array_create_suite();
     s_mod = array_modify_suite();
     s_canmove = array_canmove_suite();
+    s_move = array_move_suite();
     sr = srunner_create(s_arr);
     srunner_add_suite(sr, s_mod);
     srunner_add_suite(sr, s_canmove);
+    srunner_add_suite(sr, s_move);
     srunner_run_all(sr, CK_NORMAL);
     number_failed = srunner_ntests_failed(sr);
     srunner_free(sr);
