@@ -22,7 +22,7 @@ automatically using the minimax algorithm.
 You need a C compiler (GCC for example), Make and Check. (Some university's computer should have these already installed, at least on melkki).
 For example, in Arch Linux, ```pacman -S base-devel check``` and in Ubuntu/Debian based distros ```apt install build-essential check```.
 
-**Optional**: In order to generate a HTML coverage report, ```gcovr``` is needed. Otherwise you can use Codecov Otherwise you can use Codecov
+**Optional**: In order to generate a HTML coverage report, ```gcovr``` is needed. Otherwise you can use Codecov
 (link at the top of the page).
 
 ### Compiling
