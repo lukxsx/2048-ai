@@ -34,3 +34,13 @@ improved the documents.
 
 Time: 5h
 
+## 29.4.2022
+I added more unit tests, the coverage is now 100%. I also added more tests for
+the minimax algorithm. I added a GitHub Actions CI workflow for building the
+program and running tests (unit tests and mmax tests).
+
+Added local test coverage report generation using gcovr. This can be run with
+```make coverage-html``` and the generated file will be ```coverage.html```.
+
+Time: 3h
+

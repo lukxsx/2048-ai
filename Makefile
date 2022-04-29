@@ -24,15 +24,15 @@ mmaxtest:
 	$(CC) -Wall -Werror -o mmax tests/mmax_tests.c $(filter-out src/main.c, $(wildcard src/*.c))
 	@./mmax
 
-debug:
-	$(CC) -O2 -Wall -Werror -std=c99 -pedantic -g -o 2048 src/main.c src/game.c src/player.c src/text_ui.c src/random_ai.c src/ai.c
-
-
 codecov:
 	$(CC) -ftest-coverage -coverage -g -fprofile-arcs -O0 -o unittest tests/unit_tests.c $(filter-out src/main.c, $(wildcard src/*.c)) $(CHECK_FLAGS)
+
+coverage-html: codecov
+	@./unittest
+	gcovr --html-details coverage.html
 
 format:
 	@python format.py	
 
 clean:
-	rm -f 2048 $(OBJ_LIST) test *.gcda *.gcno *.gcov
+	rm -f 2048 $(OBJ_LIST) unittest mmax *.gcda *.gcno *.gcov coverage.*
