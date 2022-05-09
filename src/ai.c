@@ -3,6 +3,7 @@
 This file contains the code for minimax AI
 ================================================================================
 */
+// clang-format off
 #define _DEFAULT_SOURCE
 
 #include <limits.h>
@@ -13,12 +14,13 @@ This file contains the code for minimax AI
 #include <unistd.h>
 
 #include "game.h"
-
 #include "ai.h"
 #include "text_ui.h"
 
+// clang-format on
+
 const int MMAX_CHOOSE_RANDOM = 0; // random selection for minimax moves
-const int MMAX_DEPTH = 5;         // maximum depth for the minimax algo
+int MMAX_DEPTH = 5;               // maximum depth for the minimax algo
 
 move_t maximize(unsigned int *arr, int a, int b, int depth);
 move_t minimize(unsigned int *arr, int a, int b, int depth);
@@ -257,9 +259,10 @@ direction get_best_move(unsigned int *arr) {
     return best_move.dir;
 }
 
-unsigned int ai_play(int delay, int print) {
+unsigned int ai_play(int delay, int print, int depth) {
     memset(move_counter, 0, 4 * sizeof(int)); // zero the move_counter array
     unsigned int score = 0;
+    MMAX_DEPTH = depth;
 
     // set random seed
     struct timespec t;

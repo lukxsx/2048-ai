@@ -13,7 +13,7 @@ typedef struct {
 
 direction get_best_move(unsigned int *arr);
 
-unsigned int ai_play(int delay, int print);
+unsigned int ai_play(int delay, int print, int depth);
 
 int rate(unsigned int *arr);
 

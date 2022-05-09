@@ -1,15 +1,15 @@
+// clang-format off
 #include <getopt.h>
 #include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 #include "game.h"
-
 #include "ai.h"
-
 #include "player.h"
 #include "random_ai.h"
 #include "text_ui.h"
+//clang-format on
 
 /*
 ================================================================================
@@ -17,7 +17,7 @@ Runs comparasion on the three algorithms: random input, randomized AI and
 minimax AI
 ================================================================================
 */
-void compare(int n) {
+void compare(int n, int mmax_depth) {
     int *rand_scores = calloc(n, sizeof(int));
     int *simp_scores = calloc(n, sizeof(int));
     int *mmax_scores = calloc(n, sizeof(int));
@@ -53,7 +53,7 @@ void compare(int n) {
 
     // Test with minimax AI
     for (int i = 0; i < n; i++) {
-        mmax_scores[i] = ai_play(0, 0);
+        mmax_scores[i] = ai_play(0, 0, mmax_depth);
         mmax_sum += mmax_scores[i];
         if (mmax_scores[i] < mmax_min)
             mmax_min = mmax_scores[i];
@@ -87,9 +87,10 @@ int main(int argc, char **argv) {
     int delay = 0;
     int rand = 1;
     int comp = 0;
+    int mmax_depth = 5;
     int print_out = 1;
 
-    while ((opt = getopt(argc, argv, "uc:asrt:h")) != -1) {
+    while ((opt = getopt(argc, argv, "c:d:asrt:h")) != -1) {
         switch (opt) {
         case 'a':
             ai_mode = 1;
@@ -110,24 +111,29 @@ int main(int argc, char **argv) {
         case 'c':
             comp = atoi(optarg);
             break;
+        case 'd':
+            mmax_depth = atoi(optarg);
+            break;
         case '?':
             printf("Unknown option: %c\n", optopt);
             printusage(argv[0]);
             exit(EXIT_FAILURE);
         }
     }
+    
+    if (mmax_depth < 1) {
+        mmax_depth = 1;
+    }
 
     if (comp) {
-        compare(comp);
+        compare(comp, mmax_depth);
         exit(EXIT_SUCCESS);
     }
 
     if (ai_mode == 1) { // start in AI mode
-        printf("%d\n", print_out);
-        ai_play(delay, print_out);
+        ai_play(delay, print_out, mmax_depth);
 
     } else if (ai_mode == 2) {
-        printf("%d%d\n", rand, delay);
         random_ai_play(delay, rand, print_out);
     } else {
         play(); // play the game normally

@@ -67,6 +67,7 @@ The generated file is called ```coverage.html```.
 The program supports few command line options. If no options are given, the game will start in player mode (you control the game).
 ```
 -a            Play with minimax AI
+-d [value]    Set minimax depth (default is 5)
 -s            Play with randomizer AI
 -r            Play with randomized input
 -t [value]    Delay in milliseconds

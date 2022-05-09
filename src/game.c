@@ -17,7 +17,6 @@ Creating game, ending game, allocating arrays and moving and combining tiles
 Initializes a new game. Returns a new game_state_t
 ================================================================================
 */
-
 game_state_t *new_game() {
     // use calloc in order to zero the memory at the same time
     game_state_t *game = calloc(1, sizeof(game_state_t));
@@ -62,10 +61,7 @@ Returns true if a tile on the array is empty
 ================================================================================
 */
 int is_tile_empty(unsigned int *arr, int y, int x) {
-    if (arr[idx(y, x)] != 0) {
-        return 0;
-    }
-    return 1;
+    return arr[idx(y, x)] == 0;
 }
 
 /*
@@ -153,13 +149,11 @@ void move_all_left(unsigned int *arr) {
         if (arr[i] == 0) {
             continue;
         }
-        if (arr[i] != 0) {
-            arr[last] = arr[i];
-            if (i != last) {
-                arr[i] = 0;
-            }
-            last++;
+        arr[last] = arr[i];
+        if (i != last) {
+            arr[i] = 0;
         }
+        last++;
     }
 }
 
