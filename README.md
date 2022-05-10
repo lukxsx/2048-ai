@@ -7,6 +7,7 @@ automatically using the minimax algorithm.
 
 ## Links
 - [Project specification](doc/spec.md)
+- [User guide](doc/user_guide.md)
 - [Test coverage report](https://codecov.io/gh/lukxsx/2048-ai)
 - [Implementation document](doc/implementation.md)
 - [Testing document](doc/testing.md)
